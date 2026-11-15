@@ -567,7 +567,7 @@ body{margin:0}
     <div class="opt" id="jXp" hidden><div class="lvl">LV <span id="jLvl">1</span><div class="xpbar"><i id="jXpBar"></i></div><span id="jGain" style="color:var(--l)"></span></div><div id="jUnlock"></div></div>
     <div class="row end">
       <button class="btn ghost" id="jMenu">MENU</button>
-      <button class="btn ghost" id="jSave" hidden>SAVE MY ART</button>
+      <button class="btn ghost" id="jSave" hidden>SAVE TO GALLERY</button>
       <button class="btn ghost" id="jAgain" hidden>NEW THEME</button>
       <button class="btn" id="jRate">RATE MY ART</button>
     </div>
@@ -590,7 +590,7 @@ body{margin:0}
     <div id="criticBox"></div>
     <div class="row end" id="rBtns" hidden>
       <button class="btn ghost" id="rCritic" hidden>AI CRITIC</button>
-      <button class="btn ghost" id="rSave" hidden>SAVE MY ART</button>
+      <button class="btn ghost" id="rSave" hidden>SAVE TO GALLERY</button>
       <button class="btn ghost" id="rMenu">MENU</button>
       <button class="btn pink" id="rFind" hidden>NEW MATCH</button>
       <button class="btn" id="rAgain">PLAY AGAIN</button>
@@ -2768,12 +2768,9 @@ const folioGrid = x => x.n === 64 ? decAny(x.e, 4096) : decGrid(x.e);
 // every artwork gets a score: the one it got in its game, or the bot judges' score if the game didn't give one
 function folioScore(score, grid, theme){ const v = +score; if (score != null && isFinite(v) && v > 0) return Math.round(v * 10) / 10; try { return Math.round(judgeRaw(grid, theme).score * 10) / 10; } catch(e){ return null; } }
 const artFile = t => `pixel-battle-${String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png`;
-// save my art: into the hall, and a picture file onto the device
-async function saveArt(a){
-  const added = folioAdd(a);
-  let saved = false;
-  try { await downloadBlob(await gridToBlob(a.grid, a.pal, 512), artFile(a.theme)); saved = true; } catch(e){ if (e && e.code === 'declined'){ toast(added ? 'Added to your Hall of Artworks.' : 'Already in your Hall of Artworks.'); return; } }
-  toast(added ? (saved ? 'Saved! Added to your Hall of Artworks and downloaded.' : 'Added to your Hall of Artworks!') : (saved ? 'Downloaded again. It was already in your Hall of Artworks.' : 'Already in your Hall of Artworks.'));
+// save to gallery: the drawing goes into the hall. Downloading the picture happens from the hall.
+function saveArt(a){
+  toast(folioAdd(a) ? 'Saved to your Hall of Artworks! Download it from there.' : 'Already in your Hall of Artworks.');
 }
 async function downloadBlob(blob, filename){ return saveBlob(blob, filename); }
 function renderHallCount(){ const n = folio().length; $('hallCount').textContent = n ? `${n} drawing${n === 1 ? '' : 's'} on display.` : 'Every drawing you save.'; }
@@ -2785,7 +2782,7 @@ function renderHall(){
   $('hallSub').textContent = list.length ? `${list.length} artwork${list.length === 1 ? '' : 's'} on display · kept on this device` : 'Your saved drawings, kept on this device.';
   $('hallNav').hidden = $('hallActions').hidden = !list.length;
   if (!list.length){
-    wall.innerHTML = `<figure class="piece empty" style="--i:0"><div class="frame"><div class="mat">Your first masterpiece will hang here.<br><br>Tap SAVE MY ART after a match or a practice round.</div></div>
+    wall.innerHTML = `<figure class="piece empty" style="--i:0"><div class="frame"><div class="mat">Your first masterpiece will hang here.<br><br>Tap SAVE TO GALLERY after a match or a practice round.</div></div>
       <figcaption class="placard"><b>COMING SOON</b><i>by you</i><span class="meta">Pixel art, any size</span></figcaption></figure>`;
     return;
   }
