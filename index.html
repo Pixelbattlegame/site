@@ -3438,7 +3438,7 @@ function hostSync(force){
   const now = performance.now();
   if (!force && now - GS.lastSync < 2500) return;
   GS.lastSync = now;
-  const st = {host:1, hg:NET.hg | 0, rk:GS.ranked ? 1 : 0, big:GS.big ? 1 : 0, ph:GS.phase, mid:GS.mid, th:GS.theme, rem:Math.max(0, Math.round((GS.end - now) / 100) / 10), bs:GS.bots, tm:GS.time};
+  const st = {host:1, hg:NET.hg | 0, rk:GS.ranked ? 1 : 0, big:GS.big ? 1 : 0, ph:GS.phase, mid:GS.mid, th:GS.theme, rem:Math.max(0, Math.round((GS.end - now) / 100) / 10), sq:(NET.sq = (NET.sq | 0) + 1), bs:GS.bots, tm:GS.time};
   if (GS.phase === 'vote' || GS.phase === 'res'){ st.ord = GS.order.map(pi => GS.players[pi].key); st.vi = GS.vi; st.vm = GS.botsJudge ? 'bots' : GS.rankMix ? 'ranked' : GS.peopleOnly ? 'people' : 'mix'; }
   if (GS.phase === 'res' && GS.results) st.res = GS.results.map(r => [GS.players[r.pi].key, Math.round(r.avg * 10), r.n]);
   st.rdy = GS.phase === 'draw' ? [...GS.ready] : null;
@@ -3579,9 +3579,12 @@ function onRoomPeers(ch){
   for (const p of ch.peers){ const dr = p.presence && p.presence.dr; if (dr && (dr.e || dr.d) && dr.m === pr.mid) NET.cache['p:' + p.peer] = {grid:decDr(dr), pal:PALS[dr.p] ? dr.p : 'pico', nm:cleanName(p.presence.nm) || 'Artist'}; }
   const rem = +pr.rem || 0;
   const phaseChanged = pr.ph !== NET.phase;
+  // this runs whenever ANYONE in the room changes something (a vote, a drawing). The host's time left is only new when
+  // the host has sent a new snapshot; re-using an old one made the timer jump back up and never reach 0 in big rooms.
+  const fresh = pr.sq !== undefined ? pr.sq !== NET.lastSq : rem !== NET.lastRem; NET.lastSq = pr.sq; NET.lastRem = rem;
   if (pr.ph === 'theme'){ if (phaseChanged) playReel(NET.theme, BOT_THEMES.concat(EXTRA_THEMES)); }
   else if (pr.ph === 'draw'){
-    const end = now + rem * 1000; if (phaseChanged || Math.abs(end - NET.endAt) > 1500) NET.endAt = end;
+    const end = now + rem * 1000; if (phaseChanged || (fresh && Math.abs(end - NET.endAt) > 1500)) NET.endAt = end;
     if (phaseChanged && NET.ranked){ const me = ch.peers.find(p => p.sameTab); rankedArm(NET.mid, (NET.pk || []).filter(k => !me || k !== 'p:' + me.peer)); }
     if (phaseChanged){ xDrawReset(); showView('vDraw'); $('dTheme').textContent = NET.theme; edStart(prof.pal, NET.big ? 64 : 32); musicStart(); $('dDone').textContent = 'DONE'; $('dDone').disabled = false; lastTickSec = -1; NET.lastDr = ''; NET.lastDrT = 0; }
     const rdy = Array.isArray(pr.rdy) ? pr.rdy : [];
@@ -3590,7 +3593,7 @@ function onRoomPeers(ch){
   else if (pr.ph === 'collect'){ if (phaseChanged){ ED.enabled = false; musicStop(); SFX.end(); flushMyDrawing(true); showCollecting(); } }
   else if (pr.ph === 'vote'){
     const ord = Array.isArray(pr.ord) ? pr.ord : [], vi = pr.vi | 0;
-    const vmChanged = NET.vm !== pr.vm; NET.endAt = now + rem * 1000; NET.vm = pr.vm;
+    const vmChanged = NET.vm !== pr.vm; if (phaseChanged || vi !== NET.vi || (fresh && Math.abs(now + rem * 1000 - NET.endAt) > 1000)) NET.endAt = now + rem * 1000; NET.vm = pr.vm;
     if (phaseChanged || vi !== NET.vi || vmChanged){
       NET.vi = vi; if (phaseChanged){ ED.enabled = false; musicStop(); }
       const ref = String(ord[vi] || ''), art = NET.cache[ref];
@@ -3820,7 +3823,7 @@ function xPublish(force){
   const now = performance.now();
   if (!force && now - XG.sync < 400) return;
   XG.sync = now;
-  const S = xSnapshot(), k = JSON.stringify(S);
+  const S = xSnapshot(), k = JSON.stringify(S); S.sq = XG.sq = (XG.sq | 0) + 1;
   xRender(S);
   if (XG.net && NET.named && (force || k !== XG.lastS || now - XG.pub > 2500)){ XG.lastS = k; XG.pub = now; NET.named.presence({host:1, hg:NET.hg | 0, ph:'x', mid:XG.mid, x:S}).catch(() => {}); }
 }
@@ -4497,7 +4500,8 @@ function xRender(S){
   const now = performance.now();
   if (S.mid !== XC.mid){ XC.mid = S.mid; XC.kind = S.k; XC.ph = ''; XC.ti = -1; XC.resShown = ''; XC.gseq = 0; XC.gl = []; XC.arts = []; XC.vote = ''; }
   XC.s = S;
-  const end = now + (+S.rem || 0) * 1000; if (Math.abs(end - XC.endAt) > 1200 || S.ph !== XC.ph) XC.endAt = end;
+  const fresh = S.sq === undefined || S.sq !== XC.lastSq; XC.lastSq = S.sq;
+  const end = now + (+S.rem || 0) * 1000; if ((fresh && Math.abs(end - XC.endAt) > 1200) || S.ph !== XC.ph) XC.endAt = end;
   const changed = S.ph !== XC.ph || (S.k === 'cha' && S.ti !== XC.ti) || (ARENA[S.k] && S.r !== XC.ti);
   if (S.k === 'duo'){
     if (S.ph === 'theme' && changed){ noteTheme(S.th); playReel(S.th, BOT_THEMES); }
