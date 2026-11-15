@@ -2731,7 +2731,7 @@ $('jRate').onclick = async () => {
   if (!score){ score = judge(pracArt.grid, mulberry(Date.now() & 0xffff), pracArt.theme); const bv = botVerdict(pracArt.grid, pracArt.theme, score); title = bv.title; comment = bv.comment; acc = bv.acc; }
   if (acc === null) acc = accuracyOf(pracArt.grid, pracArt.theme);
   $('jHead').textContent = ai ? `AI JUDGE: “${title}”` : `“${title}”`;
-  $('jScore').textContent = `${score} / 10`; $('jText').textContent = `Accuracy: ${acc}%\n${comment}`; if (pracArt){ pracArt.score = score; pracArt.mode = 'Practice'; }
+  $('jScore').textContent = `${score} / 10`; $('jText').textContent = `Accuracy: ${acc}%\n${comment}`; if (pracArt){ pracArt.score = score; pracArt.acc = acc; pracArt.mode = 'Practice'; }
   if (score >= 8){ confetti(120); SFX.fanfare(); } else SFX.land();
   const isBest = score > (prof.best || 0); if (isBest){ prof.best = score; prof.bestTheme = pracArt.theme; }
   // XP
@@ -2761,10 +2761,12 @@ function folioAdd(a){
   const e = a.grid.length === 4096 ? encAny(a.grid) : encGrid(a.grid), list = folio();
   if (list.some(x => x.e === e && x.t === a.theme)) return false;
   list.unshift({id:Date.now().toString(36) + Math.random().toString(36).slice(2, 6), t:a.theme, e, n:a.grid.length === 4096 ? 64 : 32, p:a.pal || 'pico',
-    s:a.score == null ? null : Math.round(a.score * 10) / 10, pl:a.place || 0, m:a.mode || '', a:myName(), d:Date.now()});
+    s:folioScore(a.score, a.grid, a.theme), ac:a.acc == null ? null : a.acc, pl:a.place || 0, m:a.mode || '', a:myName(), d:Date.now()});
   folioSave(list.slice(0, FOLIO_MAX)); renderHallCount(); return true;
 }
 const folioGrid = x => x.n === 64 ? decAny(x.e, 4096) : decGrid(x.e);
+// every artwork gets a score: the one it got in its game, or the bot judges' score if the game didn't give one
+function folioScore(score, grid, theme){ const v = +score; if (score != null && isFinite(v) && v > 0) return Math.round(v * 10) / 10; try { return Math.round(judgeRaw(grid, theme).score * 10) / 10; } catch(e){ return null; } }
 const artFile = t => `pixel-battle-${String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png`;
 // save my art: into the hall, and a picture file onto the device
 async function saveArt(a){
@@ -2794,7 +2796,7 @@ function renderHall(){
     try { drawGrid(c, folioGrid(x), x.p); } catch(e){}
     mat.appendChild(c); fr.appendChild(mat); f.appendChild(fr);
     const when = new Date(x.d || Date.now()), mode = x.m ? ` · ${x.m}` : '';
-    const score = x.s != null ? `Scored ${x.s} / 10` : '', place = PLACE(x.pl);
+    const sc = x.s != null ? x.s : folioScore(null, folioGrid(x), x.t), score = sc != null ? `Scored ${sc} / 10` : '', place = PLACE(x.pl) || (x.ac != null ? `${x.ac}% accurate` : '');
     const cap = document.createElement('figcaption'); cap.className = 'placard';
     cap.innerHTML = `<b>${esc(x.t)}</b><i>${esc(cleanName(x.a) || 'Unknown artist')}, ${when.getFullYear()}</i><span class="meta">Pixel art on ${x.n}×${x.n} canvas${esc(mode)}</span>` +
       (score || place ? `<span class="medal">${[score, place].filter(Boolean).join(' · ')}</span>` : '') + `<span class="meta">${when.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'})}</span>`;
