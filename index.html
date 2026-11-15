@@ -2926,7 +2926,7 @@ function openModeSheet(k){
     : `<div class="row end"><button class="btn ghost" data-close>CLOSE</button><button class="btn" data-go="daily">PLAY DAILY #${dayNum()}</button></div>`;
   else btns = `<div class="row end"><button class="btn ghost" data-go="bots">PLAY WITH BOTS</button><button class="btn" data-go="find">FIND MATCH</button></div>`;
   const box = openSheet(`<div class="shead"><span class="mth"></span><div><h2 id="sheetTitle">${m.nm}</h2><small>${esc(m.tag)}</small></div><button class="ib" data-close aria-label="Close">✕</button></div>
-    <p class="sdesc">${esc(m.desc)}</p>${k === 'daily' && !d ? '<p class="sdesc" style="color:var(--s);font-size:15px">You only get one try, so don\'t leave in the middle.</p>' : ''}${btns}`, m.col);
+    <p class="sdesc">${esc(m.desc)}</p>${k !== 'daily' && k !== 'duo' ? '<p class="sdesc" style="color:var(--s);font-size:15px">In a Private Room, up to 12 players can play this.</p>' : ''}${k === 'daily' && !d ? '<p class="sdesc" style="color:var(--s);font-size:15px">You only get one try, so don\'t leave in the middle.</p>' : ''}${btns}`, m.col);
   modeThumb(box.querySelector('.mth'), m);
   box.querySelectorAll('[data-go]').forEach(b => b.onclick = () => {
     const go = b.dataset.go; auInit();
@@ -2942,7 +2942,7 @@ function openRoomModes(){
   if (!NET.host || !NET.named) return;
   const cur = NET.cfg.mode || 'classic';
   const html = `<div class="shead" style="grid-template-columns:minmax(0,1fr) auto"><div><h2 id="sheetTitle">PICK A MODE</h2><small>Everyone in the room plays it.</small></div><button class="ib" data-close aria-label="Close">✕</button></div>` +
-    MODE_GRPS.filter(([g]) => g !== 'today').map(([g, title]) => `<div class="mgrp"><h3>${title}</h3><div class="mlist">${XMODES.filter(m => m.grp === g || (g === 'battle' && m.grp === 'room')).map(m => `<button class="mrow" data-m="${m.k}" aria-pressed="${m.k === cur}" style="--mc:${m.col}"><span class="mth"></span><span><b>${m.nm}</b><small>${esc(m.short)}</small></span><i>${esc(m.tag.split(' · ')[0]).toUpperCase()}</i></button>`).join('')}</div></div>`).join('');
+    MODE_GRPS.filter(([g]) => g !== 'today').map(([g, title]) => `<div class="mgrp"><h3>${title}</h3><div class="mlist">${XMODES.filter(m => m.grp === g || (g === 'battle' && m.grp === 'room')).map(m => `<button class="mrow" data-m="${m.k}" aria-pressed="${m.k === cur}" style="--mc:${m.col}"><span class="mth"></span><span><b>${m.nm}</b><small>${esc(m.short)}</small></span><i>${m.k === 'duo' ? '4 PLAYERS' : 'UP TO 12'}</i></button>`).join('')}</div></div>`).join('');
   const box = openSheet(html, 'var(--y)', 'list');
   box.querySelectorAll('.mrow').forEach(b => { modeThumb(b.querySelector('.mth'), modeInfo(b.dataset.m)); b.onclick = () => { NET.cfg.mode = b.dataset.m; NET.named.presence({cfg:NET.cfg}).catch(() => {}); SFX.click(); closeSheet(); renderRoom(); }; });
 }
@@ -3341,13 +3341,13 @@ function renderRoom(){
   const nb = NET.host ? NET.cfg.bots : (+cfg.bots | 0);
   if (nb > 0){ const li = document.createElement('li'); li.innerHTML = '<i style="background:#566c86"></i><span></span><small>BOTS</small>'; li.querySelector('span').textContent = `+ ${nb} bot artist${nb === 1 ? '' : 's'}`; $('roomPlayers').appendChild(li); }
   const mode = cfg.mode || 'classic';
-  if (mode === 'pic') $('roomMode').textContent = `Picasso · 64×64 canvas · 10:00 to draw · ${hum.length > 8 ? 'first 8 play' : 'up to 8 artists'}`;
-  else if (ARENA[mode]) $('roomMode').textContent = `${modeInfo(mode).nm} · ${modeInfo(mode).tag}${hum.length > XINFO[mode].max ? ` · first ${XINFO[mode].max} play` : ''}`;
-  else if (mode !== 'classic') $('roomMode').textContent = mode === 'duo' ? `2V2 team draw · ${hum.length > 4 ? 'first 4 play' : 'bots fill empty spots'} · 3:00 to draw` : `Charades · up to 8 players · 60s turns`;
+  if (mode === 'pic') $('roomMode').textContent = `Picasso · 64×64 canvas · 10:00 to draw · ${hum.length > cfg.max ? `first ${cfg.max} play` : `up to ${cfg.max} artists`}`;
+  else if (ARENA[mode]) $('roomMode').textContent = `${modeInfo(mode).nm} · up to ${cfg.max} players · ${noPlayers(modeInfo(mode).tag)}${hum.length > cfg.max ? ` · first ${cfg.max} play` : ''}`;
+  else if (mode !== 'classic') $('roomMode').textContent = mode === 'duo' ? `2V2 team draw · ${hum.length > 4 ? 'first 4 play' : 'bots fill empty spots'} · 3:00 to draw` : `Charades · up to ${cfg.max} players · 60s turns`;
   $('roomMode').textContent += (cfg.vis === 'open' ? ' · anyone can join' : ' · code only');
   $('hostCtl').hidden = !NET.host; $('guestWait').hidden = NET.host;
   if (NET.host){
-    const cap = Math.min(NET.cfg.max, mode === 'pic' ? 8 : XINFO[mode] ? XINFO[mode].max : NET.cfg.max), humans = Math.min(hum.length, cap); NET.cfg.bots = clamp(NET.cfg.bots, 0, cap - humans); $('rbN').textContent = NET.cfg.bots;
+    const cap = Math.min(NET.cfg.max, roomCap(mode)), humans = Math.min(hum.length, cap); NET.cfg.bots = clamp(NET.cfg.bots, 0, cap - humans); $('rbN').textContent = NET.cfg.bots;
     $('roomVisSel').innerHTML = [['open', 'ANYONE (LISTED)'], ['code', 'CODE ONLY']].map(([k, l]) => `<button data-v="${k}" aria-pressed="${k === (NET.cfg.vis || 'code')}">${l}</button>`).join('');
     $('roomVisSel').querySelectorAll('button').forEach(b => b.onclick = () => { NET.cfg.vis = b.dataset.v; NET.named.presence({cfg:NET.cfg}).catch(() => {}); updateOpenPresence(); SFX.click(); renderRoom(); toast(NET.cfg.vis === 'open' ? 'Your room now shows in Open Rooms, so anyone can join.' : 'Your room is hidden. Only people with the code can join.'); });
     const rm = modeInfo(mode); $('roomModeNm').textContent = rm.nm; $('roomModeShort').textContent = rm.short; $('roomModeBtn').style.setProperty('--mc', rm.col); modeThumb($('roomModeTh'), rm);
@@ -3377,20 +3377,20 @@ function hostStart(){
   if (!NET.named || !NET.host) return;
   const mode = NET.cfg.mode || 'classic';
   if (mode === 'duo' || mode === 'cha' || ARENA[mode]){
-    const I = XINFO[mode], hum = roomHumans().slice(0, I.max), need = I.min || 2;
+    const I = XINFO[mode], max = roomCap(mode), hum = roomHumans().slice(0, max), need = I.min || 2;
     const humans = hum.map((p, i) => ({key:'p:' + p.peer, nm:cleanName(p.presence.nm) || 'Artist ' + (i + 1), kind:p.sameTab ? 'local' : 'remote'}));
-    const nb = mode === 'duo' ? 4 - humans.length : NET.mm ? Math.max(0, (I.fill || 4) - humans.length) : clamp(NET.cfg.bots, 0, I.max - humans.length);
+    const nb = mode === 'duo' ? 4 - humans.length : NET.mm ? Math.max(0, (I.fill || 4) - humans.length) : clamp(NET.cfg.bots, 0, max - humans.length);
     if (humans.length + nb < need){ toast(`You need at least ${need} players. Add a bot or wait for a friend.`); return; }
     appMode = 'xhost'; NET.hg = (NET.hg | 0) + 1;
     NET.named.presence({dr:null, vt:null}).catch(() => {});
     xStart(mode, humans, nb, true); updateOpenPresence(); return;
   }
-  const hum = roomHumans().slice(0, NET.cfg.mode === 'pic' ? 8 : NET.cfg.max);
+  const hum = roomHumans().slice(0, NET.cfg.max);
   const humans = hum.map((p, i) => ({nm:cleanName(p.presence.nm) || 'Artist ' + (i + 1), kind:p.sameTab ? 'local' : 'remote', peer:p.peer, slot:0}));
   if (humans.length + NET.cfg.bots < 2){ toast('You need at least 2 artists. Add a bot or wait for a friend.'); return; }
   appMode = 'host'; NET.ready = false;
   const pic = NET.cfg.mode === 'pic';
-  newGame({humans, bots:clamp(NET.cfg.bots, 0, (pic ? Math.min(8, NET.cfg.max) : NET.cfg.max) - humans.length), time:pic ? 600 : NET.cfg.time, big:pic, net:true, ranked:NET.ranked});
+  newGame({humans, bots:clamp(NET.cfg.bots, 0, NET.cfg.max - humans.length), time:pic ? 600 : NET.cfg.time, big:pic, net:true, ranked:NET.ranked});
   NET.named.presence({dr:null, vt:null}).catch(() => {});
   updateOpenPresence();
 }
@@ -3700,6 +3700,9 @@ const XINFO = {duo:{name:'2V2', max:4, time:180}, cha:{name:'CHARADES', max:8, t
   roy:{name:'BATTLE ROYALE', max:12, rounds:0, time:45, fill:8, bots:11, min:3}};
 // modes where everyone draws at the same time each round
 const ARENA = {blz:1, tri:1, cpy:1, imp:1, roy:1};
+// in a private room every mode except 2v2 can have the whole room (up to 12 players); matchmaking keeps each mode's own size
+const roomCap = mode => mode === 'duo' ? 4 : NET.mm && XINFO[mode] ? XINFO[mode].max : NET.cfg.max;
+const noPlayers = tag => tag.split(' · ').filter(t => !/player/.test(t)).join(' · ');
 let XG = null;
 const XC = {me:'', mid:'', kind:'', ph:'', ti:-1, s:null, endAt:0, resShown:'', gseq:0, gl:[], rdy:false, lastXc:'', lastXcT:0, cvSrc:'', partner:'', bot:null, pa:{a:0}, ds:null, lastPub:0, feedKey:'', statKey:'', lastSec:-1};
 const xOn = () => appMode === 'xhost' || appMode === 'xclient' || appMode === 'xlocal';
