@@ -3118,7 +3118,7 @@ function mqttConn(url, clientId, willTopic, on){
 
 // ---- the shared connections ----
 const RELAY_ON = RELAY_NS + 'on/';                 // RELAY_ON + id = that player's online flag
-const RL = {conns:null, handlers:new Map(), watch:RELAYS.map(() => new Map()), downT:0};
+const RL = {conns:null, handlers:new Map(), watch:RELAYS.map(() => new Map()), flags:RELAYS.map(() => new Map()), downT:0};
 const relayUp = () => RL.conns && RL.conns.some(c => c.ok);
 window.__relay = {RL, rooms: RELAY_ROOMS};
 function relayConns(){
@@ -3133,6 +3133,8 @@ function relayConns(){
         if (h) h.msg(i, topic, text, retained);
       }
     });
+    // one subscription for everyone's online flag (not one per player: with hundreds online that was tens of thousands)
+    c.subscribe(RELAY_ON + '+');
     return c;
   });
   return RL.conns;
@@ -3140,12 +3142,14 @@ function relayConns(){
 // online flags: when a player shows up in any room, watch their flag; if it is missing or gets cleared, they are gone
 function relayWatch(i, id){
   const w = RL.watch[i]; let e = w.get(id);
-  if (!e){ e = {on:null, offT:0}; w.set(id, e); RL.conns[i].subscribe(RELAY_ON + id);
+  if (!e){ e = {on:null, offT:0}; w.set(id, e);
+    if (RL.flags[i].has(id)) e.on = true;
     // no flag within a few seconds = a tab that crashed long ago left its state behind
-    e.chk = setTimeout(() => { if (e.on === null) relayGone(i, id, true); }, 5000); }
+    else e.chk = setTimeout(() => { if (e.on === null) relayGone(i, id, true); }, 5000); }
   return e;
 }
 function relayOnline(i, id, on){
+  if (on) RL.flags[i].set(id, 1); else RL.flags[i].delete(id);
   const e = RL.watch[i].get(id); if (!e) return;
   clearTimeout(e.chk);
   if (on){ const was = e.on; e.on = true; clearTimeout(e.offT); e.offT = 0; if (was !== true) RL.handlers.forEach(h => h.flag(i, id)); return; }
@@ -3166,7 +3170,8 @@ function relayJoin(name, opt = {}){
     // (not in the big lobby, where everyone answering everyone would flood the relays)
     const hello = () => { if (opt.quiet || helloT || !alive) return; helloT = setTimeout(() => { helloT = 0; if (!alive) return; lastHello = Date.now(); publish(true); }, Math.max(150 + Math.random() * 350, 1500 - (Date.now() - lastHello))); };
     const per = RELAYS.map(() => new Map()), drs = RELAYS.map(() => new Map()), listeners = new Set(), lost = new Set();
-    let merged = new Map(), snap = [], pend = {joined:[], left:[], updated:[]}, sch = 0;
+    let merged = new Map(), snap = [], pend = {joined:[], left:[], updated:[]}, sch = 0, paused = false;
+    const dirty = RELAYS.map(() => new Set()), dirtyDr = RELAYS.map(() => new Set()), clearT = new Set();
     const self = () => ({peer:RELAY_ME, presence:mine, isMe:true, sameTab:true, updatedAt:Date.now()});
     const flush = () => { sch = 0; if (!alive) return; snap = [self(), ...[...merged.values()].map(e => ({peer:e.peer, presence:e.presence, isMe:false, sameTab:false, updatedAt:e.at}))]; const ch = {peers:snap, joined:pend.joined, left:pend.left, updated:pend.updated}; pend = {joined:[], left:[], updated:[]}; listeners.forEach(f => { try { f(ch); } catch(e){ setTimeout(() => { throw e; }); } }); };
     const notify = () => { if (!sch) sch = setTimeout(flush, 20); };
@@ -3206,16 +3211,21 @@ function relayJoin(name, opt = {}){
       gone(i, id){
         if (!alive || !per[i].has(id) && !drs[i].has(id)) return;
         per[i].delete(id); const hadDr = drs[i].delete(id);
-        // whoever notices clears what a dropped or crashed tab left behind, so nobody who joins later sees a ghost player
-        conns[i].publish(base + id, '', true); if (hadDr) conns[i].publish(dbase + id, '', true);
         rebuild();
+        // what a dropped or crashed tab left behind is cleared, so nobody who joins later sees a ghost player.
+        // Everyone notices at once, so each waits a random moment and skips it if someone else already cleared it
+        // (with hundreds in the lobby, everyone clearing at once flooded the relays).
+        dirty[i].add(id); if (hadDr) dirtyDr[i].add(id);
+        const t = setTimeout(() => { clearT.delete(t); if (!alive || RL.flags[i].has(id)) return;
+          if (dirty[i].delete(id)) conns[i].publish(base + id, '', true); if (dirtyDr[i].delete(id)) conns[i].publish(dbase + id, '', true); }, opt.quiet ? 1000 + Math.random() * 14000 : 300 + Math.random() * 2500);
+        clearT.add(t);
       },
       msg(i, topic, text, retained){
         if (!alive) return;
         const c = conns[i];
         if (topic.startsWith(dbase)){
           const id = topic.slice(dbase.length); if (!id || id === RELAY_ME || id.includes('/')) return;
-          if (!text){ if (drs[i].delete(id)) rebuild(); return; }
+          if (!text){ dirtyDr[i].delete(id); if (drs[i].delete(id)) rebuild(); return; }
           let m; try { m = JSON.parse(text); } catch(e){ return; }
           if (!m || typeof m.s !== 'number' || typeof m.v !== 'object' || m.v === null) return;
           relayWatch(i, id); drs[i].set(id, {s:m.s, v:m.v}); rebuild(); return;
@@ -3223,7 +3233,7 @@ function relayJoin(name, opt = {}){
         if (!topic.startsWith(base)) return;
         const id = topic.slice(base.length);
         if (!id || id === RELAY_ME || id.includes('/')) return;
-        if (!text){ if (per[i].delete(id)){ drs[i].delete(id); rebuild(); } return; }
+        if (!text){ dirty[i].delete(id); if (per[i].delete(id)){ drs[i].delete(id); rebuild(); } return; }
         let m; try { m = JSON.parse(text); } catch(e){ return; }
         if (m && m.bye === 1){ drs[i].delete(id); if (per[i].delete(id)) rebuild(); return; }   // left on purpose
         if (!m || typeof m.p !== 'object' || m.p === null || Array.isArray(m.p) || typeof m.s !== 'number') return;
@@ -3234,8 +3244,8 @@ function relayJoin(name, opt = {}){
       }
     };
     const beat = setInterval(() => { if (Date.now() - lastPub > (opt.quiet ? 40000 : 20000)) publish(true); }, 5000);
-    const sweep = setInterval(() => { let ch = false; per.forEach((m, i) => { if (!conns[i].ok) return; for (const [id, e] of m) if (Date.now() - e.at > (opt.quiet ? 130000 : 70000)){ m.delete(id); ch = true; } }); if (ch) rebuild(); }, 10000);
-    const stop = () => { alive = false; RL.handlers.delete(rn); RELAY_ROOMS.delete(room); clearInterval(beat); clearInterval(sweep); clearTimeout(pubT); clearTimeout(downT); clearTimeout(sch); clearTimeout(helloT); conns.forEach(c => { c.unsubscribe(base + '+'); c.unsubscribe(dbase + '+'); }); };
+    const sweep = setInterval(() => { if (paused) return; let ch = false; per.forEach((m, i) => { if (!conns[i].ok) return; for (const [id, e] of m) if (Date.now() - e.at > (opt.quiet ? 130000 : 70000)){ m.delete(id); ch = true; } }); if (ch) rebuild(); }, 10000);
+    const stop = () => { alive = false; RL.handlers.delete(rn); RELAY_ROOMS.delete(room); clearInterval(beat); clearInterval(sweep); clearTimeout(pubT); clearTimeout(downT); clearTimeout(sch); clearTimeout(helloT); clearT.forEach(clearTimeout); conns.forEach(c => { c.unsubscribe(base + '+'); c.unsubscribe(dbase + '+'); }); };
     const room = {
       presence: async patch => {
         if (!alive) return;
@@ -3248,6 +3258,15 @@ function relayJoin(name, opt = {}){
       peers: () => snap,
       onPeers: (fn, onLost) => { listeners.add(fn); if (onLost) lost.add(onLost); setTimeout(() => { if (alive && listeners.has(fn)) fn({peers:snap, joined:snap, left:[], updated:[]}); }, 0); return () => { listeners.delete(fn); if (onLost) lost.delete(onLost); }; },
       connected: () => relayUp(),
+      // stop listening to this room for a while (my own state stays up), then catch up with everyone again
+      pause: on => {
+        on = !!on; if (!alive || on === paused) return; paused = on;
+        if (on){ conns.forEach(c => { c.unsubscribe(base + '+'); c.unsubscribe(dbase + '+'); }); return; }
+        const at = Date.now();
+        conns.forEach(c => { c.subscribe(base + '+'); c.subscribe(dbase + '+'); });
+        // anyone who doesn't come back with the catch-up left while I wasn't listening
+        setTimeout(() => { if (!alive || paused) return; let ch = false; per.forEach(m => { for (const [id, e] of m) if (e.at < at){ m.delete(id); ch = true; } }); if (ch) rebuild(); }, 4000);
+      },
       join: n => relayJoin(n),
       leave: async () => {
         if (!alive) return;
@@ -3286,6 +3305,9 @@ async function capsInit(){
   }
   renderOnlineAvail();
 }
+// during a game the lobby's chatter isn't needed: stop listening to it (you stay listed as online) and catch up
+// when you're back on the menu. With hundreds online this is most of the traffic each player gets.
+setInterval(() => { const r = NET.room; if (!r || typeof r.pause !== 'function') return; const want = !!NET.named && !MM.on; if (want !== !!NET.lobPaused){ NET.lobPaused = want; r.pause(want); } }, 1500);
 function renderOnlineAvail(){
   const n = NET.lobbyPeers.length;
   $('netDot').innerHTML = NET.ok ? `<span class="dot"></span>${n <= 1 ? 'Online: just you here' : n + ' here now'}` : '<span class="dot off"></span>Online: can\'t reach the game servers';
