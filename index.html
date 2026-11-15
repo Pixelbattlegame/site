@@ -39,6 +39,7 @@
 <style>
 /* Layout: arcade-cabinet panels over an animated pixel background; the game moves through full-screen views (theme spin, drawing board, voting stage, results), each one column on phones and side-by-side on wide screens */
 :root{
+  --birch:repeating-linear-gradient(90deg,rgba(120,84,38,.13) 0 1px,transparent 1px 5px,rgba(120,84,38,.07) 5px 6px,transparent 6px 11px),linear-gradient(135deg,#f6e9cb,#e2cb9b 30%,#f1e1bd 52%,#d9bf8c 78%,#ecd9b1);
   color-scheme: dark;
   --k:#1a1c2c; --p:#5d275d; --r:#b13e53; --o:#ef7d57; --y:#ffcd75; --l:#a7f070; --g:#38b764; --t:#257179;
   --n:#29366f; --b:#3b5dc9; --c:#41a6f6; --a:#73eff7; --w:#f4f4f4; --s:#94b0c2; --d:#566c86; --e:#333c57; --P:#a23ad6; --G:#ffd23f; --q:#ff77a8;
@@ -125,7 +126,7 @@ input[type=text]{width:100%;min-width:0;background:var(--e);border:4px solid var
 .duores{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .duocard{display:grid;gap:6px;justify-items:center;text-align:center;background:var(--e);padding:10px;border:4px solid transparent}
 .duocard.win{border-color:var(--G)}
-.duocard .cv canvas{width:100%;max-width:300px;aspect-ratio:1;background:var(--w);display:block}
+.duocard .cv canvas{width:100%;max-width:300px;aspect-ratio:1;display:block;border:10px solid transparent;background:linear-gradient(var(--w),var(--w)) padding-box,var(--birch) border-box;box-shadow:0 0 0 2px #8a6a3a;box-sizing:border-box}
 .duocard .cv{width:100%;display:grid;justify-items:center}
 .duocard .nm{font-weight:600;font-size:16px}
 .duocard .sc{font:400 13px var(--display);color:var(--y)}
@@ -233,7 +234,8 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 .vbar{height:8px;background:var(--e);width:100%}
 .vbar i{display:block;height:100%;background:var(--y);width:100%}
 .stage{display:grid;place-items:center;min-height:0;gap:8px}
-.frame{width:min(100%, calc(100dvh - 300px), 560px);aspect-ratio:1;border:8px solid var(--y);box-shadow:0 0 0 6px var(--k), 10px 10px 0 6px rgba(0,0,0,.45);background:var(--w);min-width:200px}
+.frame{width:min(100%, calc(100dvh - 300px), 560px);aspect-ratio:1;border:14px solid transparent;background:linear-gradient(var(--w),var(--w)) padding-box,var(--birch) border-box;box-shadow:0 0 0 2px #8a6a3a, inset 0 0 0 1px rgba(255,255,255,.5), 10px 10px 0 2px rgba(0,0,0,.45);min-width:200px}
+.frame canvas{box-shadow:0 0 0 2px #a98a52}
 .frame canvas{width:100%;height:100%}
 .by{font:400 11px var(--display);color:var(--s)}
 .votes{display:grid;gap:8px;justify-items:center}
@@ -252,8 +254,8 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 .podium{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:end}
 .pod{display:grid;gap:6px;justify-items:center;text-align:center;opacity:0;transform:translateY(20px);transition:all .4s steps(4)}
 .pod.show{opacity:1;transform:none}
-.pod canvas{width:100%;aspect-ratio:1;border:6px solid var(--d);background:var(--w)}
-.pod.p1 canvas{border-color:var(--G)} .pod.p2 canvas{border-color:var(--s)} .pod.p3 canvas{border-color:var(--o)}
+.pod canvas{width:100%;aspect-ratio:1;border:8px solid transparent;background:linear-gradient(var(--w),var(--w)) padding-box,var(--birch) border-box;box-shadow:0 0 0 2px #8a6a3a}
+
 .pod .place{font:400 18px var(--display)}
 .pod.p1 .place{color:var(--G)} .pod.p2 .place{color:var(--s)} .pod.p3 .place{color:var(--o)}
 .pod .nm{font:600 18px var(--body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
@@ -319,10 +321,10 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
   background:conic-gradient(from 150deg at 50% 0%, transparent 0deg, rgba(255,232,180,.16) 22deg, rgba(255,236,190,.22) 30deg, rgba(255,232,180,.16) 38deg, transparent 60deg),radial-gradient(ellipse 18% 46% at 50% 0%, rgba(255,236,190,.26), transparent 75%);-webkit-mask:linear-gradient(#000 55%,transparent);mask:linear-gradient(#000 55%,transparent);opacity:calc(1 - var(--d,0));transition:opacity .2s}
 .piece::after{content:"";position:absolute;top:-92px;left:50%;width:46px;height:10px;translate:-50% 0;border-radius:0 0 8px 8px;
   background:linear-gradient(#1a1014,#4a3640);box-shadow:0 6px 14px rgba(255,230,170,calc(.5 * (1 - var(--d,0))))}
-.frame{position:relative;padding:clamp(12px,3.2vw,18px);border-radius:3px;cursor:pointer;
+.piece .frame{position:relative;padding:clamp(12px,3.2vw,18px);border-radius:3px;cursor:pointer;
   background:linear-gradient(135deg,#7a4d12 0%,#f6d97d 18%,#b07a22 34%,#ffe9a8 50%,#a8701b 66%,#f1cb63 82%,#6e440e 100%);
   box-shadow:0 0 0 2px #3d2606,0 26px 40px rgba(0,0,0,.6),0 6px 10px rgba(0,0,0,.45),inset 0 0 0 2px #fff0bd,inset 0 0 0 5px #8b5a14,inset 0 0 12px rgba(0,0,0,.45)}
-.frame::before{content:"";position:absolute;inset:clamp(5px,1.4vw,8px);border:2px solid rgba(255,240,190,.55);border-radius:2px;pointer-events:none}
+.piece .frame::before{content:"";position:absolute;inset:clamp(5px,1.4vw,8px);border:2px solid rgba(255,240,190,.55);border-radius:2px;pointer-events:none}
 .mat{background:#f2ead6;padding:clamp(10px,3vw,18px);box-shadow:inset 0 0 0 1px #d8cba8,inset 2px 3px 8px rgba(0,0,0,.28)}
 .mat canvas{display:block;width:100%;aspect-ratio:1;image-rendering:pixelated;image-rendering:crisp-edges;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
 .placard{width:min(86%,250px);background:linear-gradient(#fbf6e8,#efe4c8);color:#2b2118;padding:10px 12px 11px;border-radius:2px;
@@ -605,7 +607,7 @@ body{margin:0}
     <header class="topbar"><div><div class="lbl" id="xrLbl">Results</div><h2 id="xrTitle">RESULTS</h2></div></header>
     <div id="xrBody"></div>
     <div class="opt"><div class="lvl">LV <span id="xrLvl">1</span><div class="xpbar"><i id="xrXpBar"></i></div><span id="xrGain" style="color:var(--l)"></span></div></div>
-    <div class="row end"><button class="btn ghost" id="xrMenu">MENU</button><button class="btn ghost" id="xrRoom" hidden>BACK TO ROOM</button><button class="btn pink" id="xrFind" hidden>NEW MATCH</button><button class="btn" id="xrAgain" hidden>PLAY AGAIN</button></div>
+    <div class="row end"><button class="btn ghost" id="xrMenu">MENU</button><button class="btn ghost" id="xrSave" hidden>SAVE TO GALLERY</button><button class="btn ghost" id="xrRoom" hidden>BACK TO ROOM</button><button class="btn pink" id="xrFind" hidden>NEW MATCH</button><button class="btn" id="xrAgain" hidden>PLAY AGAIN</button></div>
     <div class="note" id="xrWait" hidden>The host picks what happens next.</div>
   </div>
 </section>
@@ -3757,6 +3759,8 @@ function duoFinal(){
   for (let i = 0; i < 4096; i++) if (ED.grid[i] !== D.base[i]){ D.base[i] = ED.grid[i]; D.n++; }
   NET.named.presence({xo:null, xf:{m:XC.mid, n:D.n + 1, f:encAny(ED.grid)}, xr:XC.mid}).catch(() => {});
 }
+let lastDuo = null;
+$('xrSave').onclick = () => { if (lastDuo) saveArt(lastDuo); };
 function duoResults(S){
   const myT = duoTeamOf(S, XC.me), sc = S.res.map(v => v / 10), win = sc[0] === sc[1] ? -1 : sc[0] > sc[1] ? 0 : 1;
   $('xrLbl').textContent = '2V2 RESULTS'; $('xrTitle').textContent = 'THEME: ' + S.th;
@@ -3768,6 +3772,7 @@ function duoResults(S){
     d.querySelector('.cv').appendChild(smallCanvas(duoCanvas(S, t), 'pico', 256));
     body.querySelector('.duores').appendChild(d);
   }
+  lastDuo = myT >= 0 ? {grid:duoCanvas(S, myT), pal:'pico', theme:S.th, score:sc[myT], place:win < 0 ? 0 : win === myT ? 1 : 2, mode:'2v2'} : null;
   if (win === myT){ confetti(140); SFX.fanfare(); } else SFX.land();
   xAward(win < 0 ? 45 : win === myT ? 60 : 30, win === myT);
 }
@@ -3937,7 +3942,9 @@ function xRender(S){
 }
 function xShowRes(S){
   ED.enabled = false; musicStop(); showView('vXRes'); $('vXRes').scrollTop = 0;
+  lastDuo = null;
   if (S.k === 'duo') duoResults(S); else chaResults(S);
+  $('xrSave').hidden = !lastDuo;
   const local = appMode === 'xlocal', host = appMode === 'xhost' && !NET.mm;
   $('xrAgain').hidden = !(local || host); $('xrRoom').hidden = !host; $('xrFind').hidden = !NET.mm; $('xrWait').hidden = !(appMode === 'xclient' && !NET.mm);
 }
