@@ -420,7 +420,9 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 html{-webkit-text-size-adjust:100%}
 body{margin:0}
 .foot a{color:var(--s);text-decoration:underline;text-underline-offset:3px}
-.adslot{margin:14px auto 0;width:100%;max-width:728px;min-height:90px;text-align:center;overflow:hidden}
+.adslot{margin:14px auto 0;width:100%;max-width:728px;min-height:104px;text-align:center;overflow:hidden}
+.adslot.above{margin:4px auto 14px}
+@media (min-width:1100px) and (min-height:560px){#adMenu{position:absolute;right:clamp(24px,6vw,120px);top:50%;transform:translateY(-50%);width:316px;box-sizing:border-box;margin:0;z-index:2;background:rgba(26,28,44,.88);padding:8px;box-shadow:4px 4px 0 rgba(0,0,0,.5)}}
 .adslot::before{content:"ADVERTISEMENT";display:block;font:400 8px/1 var(--display);letter-spacing:.1em;color:var(--s);opacity:.6;margin-bottom:6px}
 </style>
 </head>
@@ -456,13 +458,13 @@ body{margin:0}
       <button class="mode m-teal" id="bModes"><b>OTHER GAMEMODES</b><span>Browse more ways to play.</span></button>
       <button class="mode m-gold" id="bHall"><b>HALL OF ARTWORKS</b><span id="hallCount">Every drawing you save.</span></button>
     </div>
+    <div class="adslot" id="adMenu" hidden></div>
     <div class="tips">
       <div><b>1 THEME</b>A random theme spins up.</div>
       <div><b>2 DRAW</b>Pixel art on a 32×32 canvas.</div>
       <div><b>3 VOTE</b>Rate every drawing 1–10.</div>
       <div><b>4 WIN</b>Highest average wins. Or practice solo for a score.</div>
     </div>
-    <div class="adslot" id="adMenu" hidden></div>
     <div class="foot"><a href="about.html">How to play</a><a href="privacy.html">Privacy</a><span id="netDot"><span class="dot off"></span>Connecting to online…</span></div>
   </div>
 </section>
@@ -632,6 +634,7 @@ body{margin:0}
       <button class="btn pink" id="jShare" hidden>SHARE</button>
       <button class="btn" id="jRate">RATE MY ART</button>
     </div>
+    <div class="adslot" id="adJ" hidden></div>
   </div>
 </section>
 
@@ -649,6 +652,7 @@ body{margin:0}
       <div class="note" id="rRkNote" style="margin-top:6px"></div>
     </div>
     <div id="criticBox"></div>
+    <div class="adslot above" id="adRes" hidden></div>
     <div class="row end" id="rBtns" hidden>
       <button class="btn ghost" id="rCritic" hidden>AI CRITIC</button>
       <button class="btn ghost" id="rSave" hidden>SAVE TO GALLERY</button>
@@ -656,7 +660,6 @@ body{margin:0}
       <button class="btn pink" id="rFind" hidden>NEW MATCH</button>
       <button class="btn" id="rAgain">PLAY AGAIN</button>
     </div>
-    <div class="adslot" id="adRes" hidden></div>
     <div class="note" id="rWait" hidden>The host picks what happens next.</div>
   </div>
 </section>
@@ -665,6 +668,7 @@ body{margin:0}
     <header class="topbar"><div><div class="lbl" id="xrLbl">Results</div><h2 id="xrTitle">RESULTS</h2></div></header>
     <div id="xrBody"></div>
     <div class="opt" id="xrXp"><div class="lvl">LV <span id="xrLvl">1</span><div class="xpbar"><i id="xrXpBar"></i></div><span id="xrGain" style="color:var(--l)"></span></div></div>
+    <div class="adslot above" id="adX" hidden></div>
     <div class="row end" id="xrBtns"><button class="btn ghost" id="xrMenu">MENU</button><button class="btn ghost" id="xrSave" hidden>SAVE TO GALLERY</button><button class="btn ghost" id="xrRoom" hidden>BACK TO ROOM</button><button class="btn pink" id="xrFind" hidden>NEW MATCH</button><button class="btn" id="xrAgain" hidden>PLAY AGAIN</button></div>
     <div class="note" id="xrWait" hidden>The host picks what happens next.</div>
   </div>
@@ -4611,19 +4615,24 @@ window.__pbReady = 1; { const w = document.getElementById('jsWarn'); if (w) w.st
 // Paste the AdSense publisher ID (ca-pub-...) and the two ad unit IDs here once AdSense approves the site.
 // While 'client' is empty, no ad code loads. While a slot is empty, that ad space stays hidden.
 // Keep Auto ads OFF for this site in AdSense, so Google never puts ads on the drawing or voting screens.
-// Ads only ever show on the menu and the results screen, never while drawing or voting.
+// Ads only ever show on the menu, the final results screens and the practice score, never while drawing or voting.
 window.PB_ADS = {client:'ca-pub-7172777388515296', menuSlot:'1624000368', resultsSlot:'9041511291'};
 (function(){
   const A = window.PB_ADS; if (!A.client) return;
   if (!document.querySelector('script[src*="adsbygoogle.js"]')){ const sc = document.createElement('script'); sc.async = true; sc.crossOrigin = 'anonymous';
     sc.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(A.client); document.head.appendChild(sc); }
-  const fill = (id, slot) => { const box = document.getElementById(id); if (!box || !slot || box.dataset.filled) return; box.hidden = false; box.dataset.filled = '1';
-    const ins = document.createElement('ins'); ins.className = 'adsbygoogle'; ins.style.display = 'block'; ins.dataset.adClient = A.client; ins.dataset.adSlot = slot; ins.dataset.adFormat = 'auto'; ins.dataset.fullWidthResponsive = 'true'; box.appendChild(ins);
+  // 'horizontal' keeps the ads above the results buttons short, so they never push the buttons off the screen
+  const fill = (id, slot, fmt) => { const box = document.getElementById(id); if (!box || !slot || box.dataset.filled) return; box.hidden = false; box.dataset.filled = '1';
+    const ins = document.createElement('ins'); ins.className = 'adsbygoogle'; ins.style.display = 'block'; ins.dataset.adClient = A.client; ins.dataset.adSlot = slot; ins.dataset.adFormat = fmt || 'auto'; ins.dataset.fullWidthResponsive = fmt ? 'false' : 'true'; box.appendChild(ins);
     try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){} };
   // an ad unit has to be on screen (with a width) when it's filled, so each fills the first time its screen shows
   const when = (sel, fn) => { const el = document.getElementById(sel); if (!el) return; const go = () => { if (!el.hidden && el.offsetWidth > 0){ fn(); ob.disconnect(); } }; const ob = new MutationObserver(go); ob.observe(el, {attributes:true, attributeFilter:['hidden']}); let p = el.parentElement; while (p){ ob.observe(p, {attributes:true, attributeFilter:['hidden']}); p = p.parentElement; } setTimeout(go, 500); };
+  // some ad spaces only show at the right moment: with the final results buttons, or once the practice drawing is scored
+  const mirror = (src, id) => { const a = document.getElementById(src), b = document.getElementById(id); if (!a || !b) return; const go = () => { b.style.display = a.hidden ? 'none' : ''; }; new MutationObserver(go).observe(a, {attributes:true, attributeFilter:['hidden']}); go(); };
   when('scrMenu', () => fill('adMenu', A.menuSlot));
-  when('rBtns', () => fill('adRes', A.resultsSlot));
+  when('vRes', () => fill('adRes', A.resultsSlot, 'horizontal'));
+  mirror('xrBtns', 'adX'); when('xrBtns', () => fill('adX', A.resultsSlot, 'horizontal'));
+  mirror('jXp', 'adJ'); when('jXp', () => fill('adJ', A.resultsSlot));
 })();
 </script>
 </body>
