@@ -131,7 +131,75 @@ input[type=text]{width:100%;min-width:0;background:var(--e);border:4px solid var
 .duocard .nm{font-weight:600;font-size:16px}
 .duocard .sc{font:400 13px var(--display);color:var(--y)}
 .duocard small{color:var(--s)}
-.xranks li{grid-template-columns:42px minmax(0,1fr) auto}
+.ranks.xranks li{grid-template-columns:42px minmax(0,1fr) auto}
+#xrBody{display:grid;gap:12px}
+/* game mode list: tiles grouped by kind, each opens a sheet with the rules and the play buttons */
+.panel.wide{max-width:660px}
+.mlists{display:grid;gap:14px}
+.mgrp{display:grid;gap:8px}
+.mgrp>h3{margin:0;font:400 10px var(--display);color:var(--s);letter-spacing:.08em}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:10px}
+.mtile{position:relative;text-align:left;border:0;background:var(--e);color:var(--w);padding:10px;display:grid;grid-template-columns:48px minmax(0,1fr);column-gap:10px;row-gap:4px;align-content:start;align-items:start;border-left:6px solid var(--mc);box-shadow:4px 4px 0 rgba(0,0,0,.5)}
+.mtile:hover{background:#3d4766}
+.mtile:active{transform:translate(2px,2px)}
+.mtile .mth{grid-row:1/3}
+.mth{width:48px;height:48px;display:block;background:var(--w)}
+.mth canvas{width:100%;height:100%;display:block;image-rendering:pixelated}
+.mtile b{font:400 11px/1.35 var(--display);color:var(--mc)}
+.mtile small{font:600 15px/1.15 var(--body);color:var(--s)}
+.mtile.wide{grid-column:1/-1}
+.mtile .new{position:absolute;top:-7px;right:-4px;font:400 8px var(--display);background:var(--q);color:var(--k);padding:3px 5px}
+.sheet{position:fixed;inset:0;z-index:60;background:rgba(10,12,22,.8);display:grid;place-items:center;padding:16px}
+.sheetbox{--mc:var(--a);background:var(--k);border:4px solid var(--mc);box-shadow:6px 6px 0 rgba(0,0,0,.6);padding:16px;display:grid;gap:12px;width:100%;max-width:470px;max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain}
+.sheetbox.list{max-width:560px}
+.shead{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:12px;align-items:center}
+.shead .mth{width:56px;height:56px}
+.shead h2{margin:0;font:400 15px/1.35 var(--display);color:var(--mc)}
+.shead small{display:block;color:var(--s);font-size:16px;margin-top:4px}
+.sdesc{margin:0;font-size:17px;line-height:1.35}
+.sstat{background:var(--e);padding:10px 12px;font:400 11px/1.8 var(--display);color:var(--y)}
+.sstat small{display:block;font:600 15px var(--body);color:var(--s)}
+.mlist{display:grid;gap:6px}
+.mrow{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;background:var(--e);border:3px solid transparent;border-left:6px solid var(--mc);padding:6px 8px;color:var(--w)}
+.mrow:hover{background:#3d4766}
+.mrow[aria-pressed="true"]{border-color:var(--y);border-left-color:var(--mc);background:var(--n)}
+.mrow .mth{width:40px;height:40px}
+.mrow b{font:400 10px/1.35 var(--display);color:var(--mc)}
+.mrow small{display:block;color:var(--s);font-size:15px;line-height:1.15}
+.mrow i{font:400 8px var(--display);color:var(--s);font-style:normal;text-align:right}
+.modepick{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--e);border:3px solid var(--d);padding:6px 10px;text-align:left;color:var(--w)}
+.modepick:hover{border-color:var(--a)}
+.modepick .mth{width:40px;height:40px}
+.modepick b{font:400 11px var(--display);color:var(--y)}
+.modepick small{display:block;color:var(--s);font-size:15px}
+.modepick i{font:400 8px var(--display);color:var(--a);font-style:normal}
+/* everyone-draws-at-once modes: round results, imposter voting */
+.agrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px}
+.acard{display:grid;gap:4px;justify-items:center;align-content:start;text-align:center;background:var(--e);padding:8px;border:3px solid transparent;position:relative;color:var(--w);font:inherit}
+.acard .cv{width:100%;display:grid;justify-items:center}
+.acard .cv canvas{width:100%;max-width:200px;aspect-ratio:1;height:auto;border:8px solid transparent;background:linear-gradient(var(--w),var(--w)) padding-box,var(--birch) border-box;box-shadow:0 0 0 2px #8a6a3a;box-sizing:border-box}
+.acard b{font-weight:600;font-size:15px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.acard .sc{font:400 11px var(--display);color:var(--y)}
+.acard small{color:var(--s);font-size:14px;line-height:1.1}
+.acard.me{border-color:var(--y)}
+.acard.ko{border-color:var(--r)}
+.acard.orig{border-color:var(--G)}
+.acard.imp{border-color:var(--q)}
+.acard .tag{position:absolute;top:2px;left:2px;z-index:1;font:400 8px var(--display);background:var(--r);color:var(--w);padding:3px 5px}
+.acard.orig .tag{background:var(--G);color:var(--k)}
+.acard.imp .tag{background:var(--q);color:var(--k)}
+button.acard{cursor:pointer}
+button.acard:hover{background:#3d4766}
+button.acard.pick{border-color:var(--l);background:#2b5a3c}
+button.acard[disabled]{opacity:.5;cursor:default}
+.anext{text-align:center;color:var(--s);margin:0}
+.anext b{color:var(--y);font:400 12px var(--display)}
+.mystrip{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.mystrip .acard{flex:0 0 104px}
+#reelCv{width:min(70vw,300px,42vh);height:auto;aspect-ratio:1;border:12px solid transparent;background:linear-gradient(var(--w),var(--w)) padding-box,var(--birch) border-box;box-shadow:0 0 0 2px #8a6a3a}
+@media (max-width:540px){ .agrid{grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px} .acard{padding:5px} .acard .cv canvas{border-width:6px} }
+.reelpal{display:flex;gap:8px;align-items:center;font:400 9px var(--display);color:var(--s)}
+.reelpal i{width:34px;height:34px;border:3px solid var(--k);box-shadow:0 0 0 2px var(--s)}
 .xranks li.me{outline:3px solid var(--y)}
 @media (max-width:540px){ .duores{gap:6px} .duocard{padding:6px} .xbanner{font-size:14px} }
 .plist .kick{margin-left:8px;border:0;background:var(--r);color:var(--w);font:400 8px var(--display);padding:5px 7px;box-shadow:inset -2px -2px 0 rgba(0,0,0,.3)}
@@ -385,7 +453,7 @@ body{margin:0}
       <button class="mode m-pur" id="bRanked"><b>RANKED</b><span id="rankSub">Real players. Place high to climb the ranks.</span></button>
       <button class="mode m-blue" id="bPrac"><b>PRACTICE</b><span>Solo. The bot judge scores you out of 10.</span></button>
       <button class="mode m-grn" id="bOnline"><b>PRIVATE ROOM</b><span id="onlineSub">Play friends with a code</span></button>
-      <button class="mode m-teal" id="bModes"><b>OTHER GAMEMODES</b><span>2V2, Charades and Picasso mode.</span></button>
+      <button class="mode m-teal" id="bModes"><b>OTHER GAMEMODES</b><span>Browse more ways to play.</span></button>
       <button class="mode m-gold" id="bHall"><b>HALL OF ARTWORKS</b><span id="hallCount">Every drawing you save.</span></button>
     </div>
     <div class="tips">
@@ -400,25 +468,12 @@ body{margin:0}
 </section>
 
 <section class="screen dim" id="scrModes" hidden>
-  <div class="panel">
+  <div class="panel wide">
     <button class="back" data-back>← BACK</button>
-    <h2>OTHER GAMEMODES</h2>
-    <div class="xcard">
-      <b>2V2 TEAM DRAW</b>
-      <span>Team up on one big 64×64 canvas. You and your partner draw on it at the same time. The bot judges pick the best team drawing.</span>
-      <div class="row"><button class="btn" data-xq="duo">FIND 2V2 MATCH</button><button class="btn ghost" data-xb="duo">PLAY WITH BOTS</button></div>
-    </div>
-    <div class="xcard">
-      <b>CHARADES</b>
-      <span>Up to 8 players take turns drawing a secret word while everyone else types guesses. A new letter of the word shows every 10 seconds. First to guess gets 5 points, then 4, 3, 2, and 1 after that. The drawer gets 1 point for every player who guesses it.</span>
-      <div class="row"><button class="btn" data-xq="cha">FIND CHARADES MATCH</button><button class="btn ghost" data-xb="cha">PLAY WITH BOTS</button></div>
-    </div>
-    <div class="xcard">
-      <b>PICASSO MODE</b>
-      <span>8 artists, a big 64×64 canvas and 10 minutes to draw your masterpiece. Then everyone votes, just like a normal battle.</span>
-      <div class="row"><button class="btn" data-xq="pic">FIND PICASSO MATCH</button><button class="btn ghost" data-xb="pic">PLAY WITH BOTS</button></div>
-    </div>
-    <div class="note">Playing with friends? Start a Private Room and pick the mode there.</div>
+    <h2>GAME MODES</h2>
+    <p class="sub" style="margin:0">Tap a mode to see how it works.</p>
+    <div id="modeList" class="mlists"></div>
+    <div class="note">Playing with friends? Start a Private Room and pick any of these modes there.</div>
   </div>
 </section>
 <section class="screen hall" id="scrHall" hidden>
@@ -505,7 +560,7 @@ body{margin:0}
       <div class="lbl">Who can join</div>
       <div class="seg" id="roomVisSel"></div>
       <div class="lbl">Mode</div>
-      <div class="seg" id="roomModeSel"></div>
+      <button class="modepick" id="roomModeBtn"><span class="mth" id="roomModeTh"></span><span><b id="roomModeNm">CLASSIC</b><small id="roomModeShort"></small></span><i>CHANGE ▸</i></button>
       <div class="lbl" id="roomTimeLbl">Drawing time</div>
       <div class="seg" id="roomTime"></div>
       <div class="row between"><div class="stepper" id="rbStep"><span>BOTS</span><button id="rbMinus" aria-label="Fewer bots">–</button><output id="rbN">0</output><button id="rbPlus" aria-label="More bots">+</button></div><button class="btn" id="roomGo">START</button></div>
@@ -517,8 +572,10 @@ body{margin:0}
 <!-- GAME VIEWS -->
 <section class="view" id="vTheme" hidden>
   <div class="reelbox">
-    <div class="lbl" style="font-size:12px">THE THEME IS</div>
+    <div class="lbl" style="font-size:12px" id="reelLbl">THE THEME IS</div>
     <div class="reel" id="reel">???</div>
+    <canvas id="reelCv" class="px" width="256" height="256" hidden aria-label="Picture to memorize"></canvas>
+    <div class="reelpal" id="reelPal" hidden></div>
     <p class="sub" id="reelSub">Get your pencils ready</p>
   </div>
 </section>
@@ -564,7 +621,7 @@ body{margin:0}
 
 <section class="view" id="vJudge" hidden>
   <div class="resbox" style="max-width:560px;justify-self:center;align-content:start">
-    <header class="topbar"><div><div class="lbl">Practice</div><h2 id="jTitle">THEME: PIZZA</h2></div></header>
+    <header class="topbar"><div><div class="lbl" id="jLbl">Practice</div><h2 id="jTitle">THEME: PIZZA</h2></div></header>
     <div class="frame" style="justify-self:center;width:min(100%, 420px, calc(100dvh - 380px));min-width:220px"><canvas id="jc" class="px" width="512" height="512" aria-label="Your drawing"></canvas></div>
     <div class="critic" id="jBox"><b id="jHead">TIME'S UP!</b><span id="jScore" style="font:400 28px var(--display);color:var(--y)"></span><span id="jText" style="white-space:pre-line">Ready for the AI judge?</span></div>
     <div class="opt" id="jXp" hidden><div class="lvl">LV <span id="jLvl">1</span><div class="xpbar"><i id="jXpBar"></i></div><span id="jGain" style="color:var(--l)"></span></div><div id="jUnlock"></div></div>
@@ -572,6 +629,7 @@ body{margin:0}
       <button class="btn ghost" id="jMenu">MENU</button>
       <button class="btn ghost" id="jSave" hidden>SAVE TO GALLERY</button>
       <button class="btn ghost" id="jAgain" hidden>NEW THEME</button>
+      <button class="btn pink" id="jShare" hidden>SHARE</button>
       <button class="btn" id="jRate">RATE MY ART</button>
     </div>
   </div>
@@ -606,11 +664,12 @@ body{margin:0}
   <div class="resbox">
     <header class="topbar"><div><div class="lbl" id="xrLbl">Results</div><h2 id="xrTitle">RESULTS</h2></div></header>
     <div id="xrBody"></div>
-    <div class="opt"><div class="lvl">LV <span id="xrLvl">1</span><div class="xpbar"><i id="xrXpBar"></i></div><span id="xrGain" style="color:var(--l)"></span></div></div>
-    <div class="row end"><button class="btn ghost" id="xrMenu">MENU</button><button class="btn ghost" id="xrSave" hidden>SAVE TO GALLERY</button><button class="btn ghost" id="xrRoom" hidden>BACK TO ROOM</button><button class="btn pink" id="xrFind" hidden>NEW MATCH</button><button class="btn" id="xrAgain" hidden>PLAY AGAIN</button></div>
+    <div class="opt" id="xrXp"><div class="lvl">LV <span id="xrLvl">1</span><div class="xpbar"><i id="xrXpBar"></i></div><span id="xrGain" style="color:var(--l)"></span></div></div>
+    <div class="row end" id="xrBtns"><button class="btn ghost" id="xrMenu">MENU</button><button class="btn ghost" id="xrSave" hidden>SAVE TO GALLERY</button><button class="btn ghost" id="xrRoom" hidden>BACK TO ROOM</button><button class="btn pink" id="xrFind" hidden>NEW MATCH</button><button class="btn" id="xrAgain" hidden>PLAY AGAIN</button></div>
     <div class="note" id="xrWait" hidden>The host picks what happens next.</div>
   </div>
 </section>
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle"><div class="sheetbox" id="sheetBox"></div></div>
 <div id="toast" hidden></div>
 
 <script>
@@ -724,7 +783,7 @@ function setMute(m){ AU.muted = m; store.set('muted', m); if (AU.m) AU.m.gain.va
 // ---------- art encoding & rendering ----------
 const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 function encGrid(g){ let bytes = '', acc = 0, bits = 0; for (let i = 0; i < CELLS; i++){ acc = (acc << 5) | (g[i] & 31); bits += 5; while (bits >= 8){ bits -= 8; bytes += String.fromCharCode((acc >> bits) & 255); } acc &= (1 << bits) - 1; } return btoa(bytes); }
-const GAME_V = 10;   // bump when online data changes in a way older copies can't read; versions never share rooms or matchmaking
+const GAME_V = 11;   // bump when online data changes in a way older copies can't read; versions never share rooms or matchmaking
 const roomName = code => 'pixelbattle' + GAME_V + '-' + String(code).toLowerCase();
 function decGrid(s){ const g = new Uint8Array(CELLS); try { const b = atob(String(s || '')); if (b.length <= CELLS / 2){ for (let i = 0; i < CELLS / 2 && i < b.length; i++){ const v = b.charCodeAt(i); g[i * 2] = v >> 4; g[i * 2 + 1] = v & 15; } } else { let acc = 0, bits = 0, k = 0; for (let i = 0; i < b.length && k < CELLS; i++){ acc = (acc << 8) | b.charCodeAt(i); bits += 8; while (bits >= 5 && k < CELLS){ bits -= 5; g[k++] = (acc >> bits) & 31; } acc &= (1 << bits) - 1; } } } catch(e){} return g; }
 function drawGrid(canvas, grid, palId, opts = {}){
@@ -2279,9 +2338,9 @@ function syncTools(){
 }
 function buildPalette(){
   const pal = PALS[ED.pal].c;
-  const order = pal.length > 16 ? pal.map((_, k) => k % 2 ? 16 + (k >> 1) : k >> 1) : pal.map((_, k) => k);
+  const order = ED.only ? ED.only : pal.length > 16 ? pal.map((_, k) => k % 2 ? 16 + (k >> 1) : k >> 1) : pal.map((_, k) => k);
   $('palette').innerHTML = order.map(i => `<button class="swatch" style="background:${pal[i]}" data-c="${i}" aria-label="Color ${i + 1}" aria-pressed="${ED.color === i}"></button>`).join('') +
-    `<select class="palsel" id="palSel" aria-label="Palette">${prof.unl.map(p => `<option value="${p}"${p === ED.pal ? ' selected' : ''}>${PALS[p].n}</option>`).join('')}</select>`;
+    `<select class="palsel" id="palSel" aria-label="Palette"${ED.only ? ' hidden' : ''}>${prof.unl.map(p => `<option value="${p}"${p === ED.pal ? ' selected' : ''}>${PALS[p].n}</option>`).join('')}</select>`;
   $('palette').querySelectorAll('[data-c]').forEach(b => b.onclick = () => { ED.color = +b.dataset.c; if (ED.tool === 'erase' || ED.tool === 'pick') ED.tool = 'pen'; syncTools(); buildPaletteSel(); SFX.click(990); });
   $('palSel').onchange = e => { const old = PALS[ED.pal].paper; ED.pal = e.target.value; const np = PALS[ED.pal].paper; for (let i = 0; i < ED.grid.length; i++) if (ED.grid[i] === old) ED.grid[i] = np; buildPalette(); edChanged(); };
 }
@@ -2330,21 +2389,21 @@ addEventListener('keydown', e => {
     if ((e.ctrlKey || e.metaKey) && k === 'y'){ e.preventDefault(); toolAction('redo'); return; }
     const map = {b:'pen', p:'pen', n:'brush', g:'fill', f:'fill', i:'pick', e:'erase', m:'mirror', z:'undo', y:'redo'};
     if (map[k]){ toolAction(map[k]); return; }
-    if (/^[0-9]$/.test(k)){ ED.color = k === '0' ? 9 : +k - 1; buildPaletteSel(); return; }
+    if (/^[0-9]$/.test(k)){ const c = k === '0' ? 9 : +k - 1; if (ED.only){ if (ED.only[c] !== undefined) ED.color = ED.only[c]; } else ED.color = c; buildPaletteSel(); return; }
   }
   if (!$('vVote').hidden && /^[0-9]$/.test(e.key)){ const v = e.key === '0' ? 10 : +e.key; if (voteSlots.length) castVote(voteSlots[0], v); }
 });
-function edStart(palId, n){
-  ED.n = n || 32; ED.own = null; ED.shared = false;
-  ED.pal = prof.unl.includes(palId) ? palId : 'pico'; ED.grid = new Uint8Array(ED.n * ED.n).fill(PALS[ED.pal].paper);
-  ED.color = ED.pal === 'pico' ? 0 : 0; ED.tool = 'pen'; ED.size = 1; ED.mirror = false; ED.undo = []; ED.redo = []; ED.enabled = true; ED.dirty = true;
+function edStart(palId, n, only){
+  ED.n = n || 32; ED.own = null; ED.shared = false; ED.only = only || null;
+  ED.pal = only ? 'pico' : prof.unl.includes(palId) ? palId : 'pico'; ED.grid = new Uint8Array(ED.n * ED.n).fill(PALS[ED.pal].paper);
+  ED.color = only ? only[0] : 0; ED.tool = 'pen'; ED.size = 1; ED.mirror = false; ED.undo = []; ED.redo = []; ED.enabled = true; ED.dirty = true;
   buildTools(); buildPalette(); edRender();
 }
 
 // ---------- views ----------
 const VIEWS = ['vTheme', 'vHand', 'vDraw', 'vVote', 'vRes', 'vJudge', 'vXRes'];
 const SCREENS = ['scrMenu', 'scrModes', 'scrHall', 'scrRanks', 'scrPrac', 'scrQueue', 'scrOnline', 'scrRoom'];
-function showView(id){ for (const v of VIEWS) $(v).hidden = v !== id; if (id) for (const s of SCREENS) $(s).hidden = true; }
+function showView(id){ for (const v of VIEWS) $(v).hidden = v !== id; if (id) for (const s of SCREENS) $(s).hidden = true; if (id === 'vTheme'){ $('reelLbl').textContent = 'THE THEME IS'; $('reel').hidden = false; $('reelCv').hidden = true; $('reelPal').hidden = true; } }
 function show(id){ for (const s of SCREENS) $(s).hidden = s !== id; if (id) for (const v of VIEWS) $(v).hidden = true; }
 function toast(msg){ const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 2600); }
 const fmt = s => { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
@@ -2646,12 +2705,19 @@ function startLocal(setup){
   newGame(setup);
 }
 function xDrawReset(){ $('vDraw').className = 'view'; $('dDone').hidden = false; $('dTheme').parentNode.firstChild.textContent = 'DRAW: '; }
-function toMenu(){ XG = null; XC.s = null; XC.mid = ''; xDrawReset(); if (MM.on) stopQueue(); else if (MM.lastQ && MM.lastQ !== 'null') setLobbyQ(null); resTimers.forEach(clearTimeout); clearTimeout(reelTimer); GS = null; appMode = 'menu'; ED.enabled = false; musicStop(); showView(null); show('scrMenu'); refreshMenu(); makeFloaters(); }
+function toMenu(){ closeSheet(); XG = null; XC.s = null; XC.mid = ''; xDrawReset(); if (MM.on) stopQueue(); else if (MM.lastQ && MM.lastQ !== 'null') setLobbyQ(null); resTimers.forEach(clearTimeout); clearTimeout(reelTimer); GS = null; appMode = 'menu'; ED.enabled = false; musicStop(); showView(null); show('scrMenu'); refreshMenu(); makeFloaters(); }
 function quitGame(){ if (xOn()){ xQuit(); return; } if (appMode === 'host' || appMode === 'client'){ if (prof.rpend && performance.now() - (quitGame.arm || 0) > 2500){ quitGame.arm = performance.now(); toast('Leaving a ranked match counts as last place. Tap ✕ again to leave.'); return; } leaveRoom(); toMenu(); return; } if (GS && GS.phase !== 'res' && GS.phase !== 'judge'){ if (performance.now() - (quitGame.arm || 0) > 2500){ quitGame.arm = performance.now(); toast('Tap ✕ again to quit this game.'); return; } } toMenu(); }
 $('dQuit').onclick = quitGame; $('vQuit').onclick = quitGame;
 $('dDone').onclick = () => {
   auInit();
   if (xOn()){
+    if (XC.s && ARENA[XC.s.k]){
+      const S = XC.s; if (S.ph !== 'draw' || XC.rdy) return;
+      XC.rdy = true; $('dDone').textContent = 'WAITING…'; $('dDone').disabled = true;
+      if (XG) XG.rdy.add(XC.me); else if (NET.named){ XC.lastXd = encGrid(ED.grid); NET.named.presence({xr:XC.mid + ':' + S.r, xd:{m:S.mid, r:S.r, e:XC.lastXd}}).catch(() => {}); }
+      if (XG) xPublish(true);
+      return;
+    }
     if (!XC.s || XC.s.k !== 'duo' || XC.s.ph !== 'draw' || XC.rdy) return;
     XC.rdy = true; $('dDone').textContent = 'WAITING…'; $('dDone').disabled = true;
     if (XG) XG.rdy.add(XC.me); else if (NET.named) NET.named.presence({xr:XC.mid}).catch(() => {});
@@ -2701,13 +2767,15 @@ let pracArt = null;
 const AI_SCALE = 'Use this scale strictly: 1 = scribbles or a blank canvas; 2 = a deformed drawing; 3 = slightly better formed, maybe better colors; 4 = still bad but decent; 5 = they made the thing with the right colors but it looks ugly; 6 = slightly better than that; 7 = it actually looks like the thing but could be better; 8 = it looks really good; 9 = almost perfect; 10 = beautifully drawn with an amazing background and the object as good as or better than asked for. Most quick drawings land between 4 and 7. A drawing of the wrong thing gets 3 or less however nice it is.';
 const sizeTxt = g => g.length === 4096 ? '64x64' : '32x32';
 function showJudge(){
-  const me = GS.players[0]; pracArt = {grid:me.grid, pal:me.pal, theme:GS.theme};
+  const me = GS.players[0]; pracArt = {grid:me.grid, pal:me.pal, theme:GS.theme, daily:!!GS.daily};
   GS.phase = 'judge'; showView('vJudge');
   drawGrid($('jc'), me.grid, me.pal);
   $('jTitle').textContent = 'THEME: ' + GS.theme;
   $('jHead').textContent = "TIME'S UP!"; $('jScore').textContent = ''; $('jText').textContent = SAMPLE ? 'Ready? The AI judge will score your drawing out of 10.' : 'Ready? The bot judge will score your drawing out of 10.';
   $('jRate').hidden = false; $('jRate').disabled = false; $('jRate').textContent = 'RATE MY ART';
-  $('jAgain').hidden = true; $('jSave').hidden = true; $('jXp').hidden = true;
+  $('jAgain').hidden = true; $('jSave').hidden = true; $('jXp').hidden = true; $('jShare').hidden = true;
+  $('jLbl').textContent = GS.daily ? 'Daily Challenge' : 'Practice';
+  if (GS.daily){ $('jTitle').textContent = `DAILY #${dayNum()}: ${GS.theme}`; $('jText').textContent = 'One try. The bot judges score it out of 10.'; $('jRate').textContent = 'SEE MY SCORE'; }
 }
 function blankCanvas(grid){ const c = new Array(32).fill(0); for (const v of grid) c[v]++; return Math.max(...c) > grid.length - 6; }
 // Picasso matches use a 64x64 canvas; bots draw at 32 and get scaled up, the judge looks at a 32x32 version
@@ -2718,6 +2786,7 @@ const decDr = dr => dr.n === 64 ? decAny(dr.e, 4096) : decGrid(dr.e || dr.d);
 $('jRate').onclick = async () => {
   if (!pracArt) return; auInit();
   $('jRate').disabled = true;
+  if (pracArt.daily){ dailyRate(); return; }
   let score = 0, title = '', comment = '', ai = false, acc = null;
   if (blankCanvas(pracArt.grid)){ score = 1; title = 'The Void'; comment = 'A bold statement. Next time try putting some pixels on it.'; }
   else if (SAMPLE){
@@ -2749,6 +2818,137 @@ $('jRate').onclick = async () => {
 $('jAgain').onclick = () => { auInit(); startPractice(); };
 $('jMenu').onclick = () => toMenu();
 $('jSave').onclick = () => { if (pracArt) saveArt(pracArt); };
+// ---------- daily challenge: one prompt for everyone each day, one try ----------
+const dayKey = (d = new Date()) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+const dayNum = () => { const d = new Date(); return Math.floor((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(2026, 10, 15)) / 864e5) + 1; };
+function dailyTheme(key = dayKey()){
+  let h = 2166136261; for (const c of 'pb-daily-' + key){ h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
+  const R = mulberry(h >>> 0); R(); return BOT_THEMES[Math.floor(R() * BOT_THEMES.length)];
+}
+const dailyDone = () => prof.dly && prof.dly.d === dayKey() ? prof.dly : null;
+function untilMidnight(){ const n = new Date(), m = new Date(n.getFullYear(), n.getMonth(), n.getDate() + 1), s = Math.max(0, (m - n) / 1000); return `${Math.floor(s / 3600)}h ${Math.floor(s / 60) % 60}m`; }
+function startDaily(){
+  if (dailyDone()){ openModeSheet('daily'); return; }
+  auInit(); if (NET.named) leaveRoom();
+  const theme = dailyTheme(), y = new Date(); y.setDate(y.getDate() - 1);
+  const prev = prof.dly || {}, streak = prev.d === dayKey(y) ? (prev.st | 0) + 1 : 1;
+  // your one try starts now: leaving halfway still uses it up
+  prof.dly = {d:dayKey(), s:0, acc:0, st:streak, th:theme, n:dayNum()}; saveProf();
+  appMode = 'practice';
+  GS = {mid:Math.random().toString(36).slice(2, 8), theme, time:120, net:false, hot:false, practice:true, daily:true, players:[{key:'h0', nm:myName(), kind:'local', slot:0, grid:null, pal:'pico'}], bots:[],
+    phase:'theme', end:performance.now() + 4200, order:[], vi:0, votes:[], judges:0, results:null, hotQ:[], cur:null, ready:new Set(), lastSync:0, local:1};
+  playReel(theme, BOT_THEMES); $('reelLbl').textContent = `DAILY #${dayNum()} · TODAY'S THEME`;
+}
+function dailyRate(){
+  const g = pracArt.grid, th = pracArt.theme, blank = blankCanvas(g);
+  let s = 1;
+  if (!blank){ const R = mulberry(dayNum() * 7919 + 13); let sum = 0; for (let j = 0; j < 3; j++) sum += judge(g, R, th); s = Math.round(sum / 3 * 10) / 10; }
+  const bv = blank ? {title:'The Void', comment:'A bold statement. Tomorrow, try putting some pixels on it.', acc:0} : botVerdict(g, th, Math.round(s));
+  const acc = blank ? 0 : bv.acc, st = (prof.dly && prof.dly.d === dayKey() ? prof.dly.st : 1) | 0 || 1;
+  prof.dly = {d:dayKey(), s, acc, st, th, n:dayNum(), t:bv.title};
+  const gain = 30 + Math.round(s * 5) + Math.min(5, st) * 4;
+  const before = levelOf(prof.xp); prof.xp += gain; const after = levelOf(prof.xp); saveProf();
+  $('jHead').textContent = `“${bv.title}”`; $('jScore').textContent = `${s.toFixed(1)} / 10`;
+  $('jText').textContent = `Accuracy: ${acc}%\n${bv.comment}\nStreak: ${st} day${st === 1 ? '' : 's'} in a row. Come back tomorrow for a new prompt.`;
+  Object.assign(pracArt, {score:s, acc, mode:'Daily Challenge'});
+  if (s >= 8){ confetti(120); SFX.fanfare(); } else SFX.land();
+  $('jXp').hidden = false; $('jLvl').textContent = after.l; $('jGain').textContent = `+${gain} XP`; $('jXpBar').style.width = (after.cur / after.need * 100) + '%'; $('jUnlock').innerHTML = '';
+  if (after.l > before.l) setTimeout(() => SFX.unlock(), 500);
+  $('jRate').hidden = true; $('jAgain').hidden = true; $('jSave').hidden = false; $('jShare').hidden = false;
+}
+function shareDaily(){
+  const d = dailyDone(); if (!d || !d.s){ toast('Play today’s challenge first.'); return; }
+  const txt = `Pixel Battle Daily #${d.n || dayNum()} 🎨\n${d.th}: ${(+d.s).toFixed(1)}/10 (${d.acc | 0}% accurate)\n🔥 ${d.st | 0}-day streak\nCan you beat me? pixelbattlegame.com`;
+  const copy = () => { try { navigator.clipboard.writeText(txt).then(() => toast('Score copied! Paste it to your friends.'), () => toast('Could not copy. Take a screenshot instead!')); } catch(e){ toast('Could not copy. Take a screenshot instead!'); } };
+  try { if (navigator.share && matchMedia('(pointer:coarse)').matches){ navigator.share({text:txt}).catch(e => { if (!e || e.name !== 'AbortError') copy(); }); return; } } catch(e){}
+  copy();
+}
+$('jShare').onclick = () => shareDaily();
+
+// ---------- browsing the game modes ----------
+const XMODES = [
+  {k:'daily', grp:'today', nm:'DAILY CHALLENGE', col:'#ffcd75', art:'SUNSET', isNew:1, tag:'1 try a day · same prompt for everyone',
+    short:'One prompt for the whole world today.', desc:'Everyone in the world gets the same prompt today. You get one try and 2 minutes, then the bot judges score your drawing out of 10. Share your score with friends and play every day to keep your streak going. A new prompt comes out at midnight.'},
+  {k:'classic', grp:'room', nm:'CLASSIC', col:'#e04a5f', art:'PIZZA', tag:'2–12 players · you pick the time',
+    short:'Draw the theme, then everyone votes.', desc:'The normal Pixel Battle: everyone draws the same theme, then you all rate each drawing from 1 to 10. Highest average wins.'},
+  {k:'blz', grp:'battle', nm:'BLITZ', col:'#ef7d57', art:'ROCKET', isNew:1, tag:'5 rounds · 30 seconds each',
+    short:'Five prompts. Thirty seconds each.', desc:'5 prompts in a row and only 30 seconds to draw each one. The bot judges score every drawing, and your total after 5 rounds decides the winner. Draw big and fast.'},
+  {k:'roy', grp:'battle', nm:'BATTLE ROYALE', col:'#ff77a8', art:'CROWN', isNew:1, tag:'up to 12 players · last one standing',
+    short:'Lowest scores get knocked out.', desc:'Up to 12 artists draw the same prompt, 45 seconds a round. The bot judges score every drawing and about a third of the artists left, the lowest scores, get knocked out each round. Keep drawing until only one artist is standing.'},
+  {k:'tri', grp:'battle', nm:'3-COLOR CHALLENGE', col:'#a7f070', art:'FLOWER', isNew:1, tag:'3 rounds · only 3 colors',
+    short:'Everyone gets the same 3 colors.', desc:'Each round everyone gets the same 3 random colors (plus white) and 90 seconds to draw the prompt with only those. Get creative with what you have. The bot judges score each drawing and the highest total after 3 rounds wins.'},
+  {k:'cpy', grp:'battle', nm:'COPYCAT', col:'#73eff7', art:'OWL', isNew:1, tag:'3 rounds · draw from memory',
+    short:'See it for 5 seconds. Redraw it.', desc:'A picture shows on screen for 5 seconds, then disappears. Redraw it from memory in 45 seconds. Your score is how closely your pixels match the original: the right colors in the right places. 3 rounds, highest total wins.'},
+  {k:'pic', grp:'battle', nm:'PICASSO', col:'#c58bff', art:'CASTLE', tag:'8 players · 10 minutes · 64×64',
+    short:'A big canvas and 10 minutes.', desc:'8 artists, a big 64×64 canvas and 10 minutes to draw your masterpiece. Then everyone votes, just like a normal battle.'},
+  {k:'imp', grp:'party', nm:'IMPOSTER', col:'#ffd23f', art:'GHOST', isNew:1, tag:'3–8 players · draw, then vote',
+    short:'One player has a different word.', desc:'Everyone gets the same word except one secret imposter, who gets a similar one (like CAT and DOG). Nobody is told who the imposter is, maybe not even the imposter! Draw your word, then vote for the drawing that doesn\'t fit. Catch the imposter for 2 points. The imposter gets a point for every wrong vote and 3 more for getting away. 3 rounds.'},
+  {k:'cha', grp:'party', nm:'CHARADES', col:'#41a6f6', art:'CAT', tag:'up to 8 players · 60 second turns',
+    short:'Draw a secret word. Others guess.', desc:'Up to 8 players take turns drawing a secret word while everyone else types guesses. A new letter of the word shows every 10 seconds. First to guess gets 5 points, then 4, 3, 2, and 1 after that. The drawer gets 1 point for every player who guesses it.'},
+  {k:'duo', grp:'party', nm:'2V2 TEAM DRAW', col:'#38b7a8', art:'HOUSE', tag:'4 players · 3 minutes · 64×64',
+    short:'Share one big canvas with a partner.', desc:'Team up on one big 64×64 canvas. You and your partner draw on it at the same time. The bot judges pick the best team drawing.'}
+];
+const MODE_GRPS = [['today', 'TODAY'], ['battle', 'BATTLES'], ['party', 'PARTY GAMES']];
+const modeInfo = k => XMODES.find(m => m.k === k) || XMODES[1];
+const MODE_ART = {};
+function modeThumb(el, m){ if (!el) return; if (!MODE_ART[m.k]) MODE_ART[m.k] = makeArt(m.art, 4242 + m.k.charCodeAt(0), 2); el.innerHTML = ''; el.appendChild(smallCanvas(MODE_ART[m.k], 'pico', 64)); }
+function renderModes(){
+  const box = $('modeList'); box.innerHTML = '';
+  for (const [g, title] of MODE_GRPS){
+    const list = XMODES.filter(m => m.grp === g); if (!list.length) continue;
+    const sec = document.createElement('section'); sec.className = 'mgrp'; sec.innerHTML = `<h3>${title}</h3><div class="mgrid"></div>`;
+    for (const m of list){
+      const b = document.createElement('button'); b.className = 'mtile' + (m.k === 'daily' ? ' wide' : ''); b.style.setProperty('--mc', m.col);
+      const d = m.k === 'daily' ? dailyDone() : null;
+      const sub = m.k === 'daily' ? (d && d.s ? `Today: ${(+d.s).toFixed(1)} / 10 · new prompt in ${untilMidnight()}` : d ? `You used today's try · new prompt in ${untilMidnight()}` : `Daily #${dayNum()} is ready. ${m.short}`) : m.short;
+      b.innerHTML = `<span class="mth"></span><b>${m.nm}</b><small>${esc(sub)}</small>${m.isNew && !(d && m.k === 'daily') ? '<span class="new">NEW</span>' : ''}`;
+      modeThumb(b.querySelector('.mth'), m);
+      b.onclick = () => { SFX.click(); openModeSheet(m.k); };
+      sec.querySelector('.mgrid').appendChild(b);
+    }
+    box.appendChild(sec);
+  }
+}
+function openSheet(html, col, cls){
+  const box = $('sheetBox'); box.className = 'sheetbox' + (cls ? ' ' + cls : ''); box.style.setProperty('--mc', col || 'var(--a)'); box.innerHTML = html;
+  box.querySelectorAll('[data-close]').forEach(b => b.onclick = closeSheet);
+  $('sheet').hidden = false; setTimeout(() => { const f = box.querySelector('.btn'); try { if (f && matchMedia('(pointer:fine)').matches) f.focus(); } catch(e){} }, 30);
+  return box;
+}
+function closeSheet(){ $('sheet').hidden = true; }
+$('sheet').addEventListener('pointerdown', e => { if (e.target === $('sheet')) closeSheet(); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && !$('sheet').hidden) closeSheet(); });
+function openModeSheet(k){
+  const m = modeInfo(k), d = k === 'daily' ? dailyDone() : null;
+  let btns;
+  if (k === 'daily') btns = d ? `<div class="sstat">${d.s ? `TODAY: ${(+d.s).toFixed(1)} / 10 · ${d.acc | 0}% ACCURATE` : 'YOU USED TODAY\'S TRY'}<small>${esc(d.th || '')} · Streak: ${d.st | 0} day${(d.st | 0) === 1 ? '' : 's'} · new prompt in ${untilMidnight()}</small></div>
+      <div class="row end"><button class="btn ghost" data-close>CLOSE</button>${d.s ? '<button class="btn pink" data-go="share">SHARE MY SCORE</button>' : ''}</div>`
+    : `<div class="row end"><button class="btn ghost" data-close>CLOSE</button><button class="btn" data-go="daily">PLAY DAILY #${dayNum()}</button></div>`;
+  else btns = `<div class="row end"><button class="btn ghost" data-go="bots">PLAY WITH BOTS</button><button class="btn" data-go="find">FIND MATCH</button></div>`;
+  const box = openSheet(`<div class="shead"><span class="mth"></span><div><h2 id="sheetTitle">${m.nm}</h2><small>${esc(m.tag)}</small></div><button class="ib" data-close aria-label="Close">✕</button></div>
+    <p class="sdesc">${esc(m.desc)}</p>${k === 'daily' && !d ? '<p class="sdesc" style="color:var(--s);font-size:15px">You only get one try, so don\'t leave in the middle.</p>' : ''}${btns}`, m.col);
+  modeThumb(box.querySelector('.mth'), m);
+  box.querySelectorAll('[data-go]').forEach(b => b.onclick = () => {
+    const go = b.dataset.go; auInit();
+    if (go === 'share'){ shareDaily(); return; }
+    closeSheet();
+    if (go === 'daily') startDaily();
+    else if (go === 'bots') xLocal(k);
+    else startQueue(MM_KIND[k]);
+  });
+}
+// private room: the host picks from the same list
+function openRoomModes(){
+  if (!NET.host || !NET.named) return;
+  const cur = NET.cfg.mode || 'classic';
+  const html = `<div class="shead" style="grid-template-columns:minmax(0,1fr) auto"><div><h2 id="sheetTitle">PICK A MODE</h2><small>Everyone in the room plays it.</small></div><button class="ib" data-close aria-label="Close">✕</button></div>` +
+    MODE_GRPS.filter(([g]) => g !== 'today').map(([g, title]) => `<div class="mgrp"><h3>${title}</h3><div class="mlist">${XMODES.filter(m => m.grp === g || (g === 'battle' && m.grp === 'room')).map(m => `<button class="mrow" data-m="${m.k}" aria-pressed="${m.k === cur}" style="--mc:${m.col}"><span class="mth"></span><span><b>${m.nm}</b><small>${esc(m.short)}</small></span><i>${esc(m.tag.split(' · ')[0]).toUpperCase()}</i></button>`).join('')}</div></div>`).join('');
+  const box = openSheet(html, 'var(--y)', 'list');
+  box.querySelectorAll('.mrow').forEach(b => { modeThumb(b.querySelector('.mth'), modeInfo(b.dataset.m)); b.onclick = () => { NET.cfg.mode = b.dataset.m; NET.named.presence({cfg:NET.cfg}).catch(() => {}); SFX.click(); closeSheet(); renderRoom(); }; });
+}
+$('roomModeBtn').onclick = () => { SFX.click(); openRoomModes(); };
+$('bModes').onclick = () => { auInit(); renderModes(); show('scrModes'); };
+
 // ---------- hall of artworks: every drawing you save, kept on this device ----------
 const FOLIO_MAX = 120;
 const folio = () => { const f = store.get('folio', []); return Array.isArray(f) ? f : []; };
@@ -3142,19 +3342,18 @@ function renderRoom(){
   if (nb > 0){ const li = document.createElement('li'); li.innerHTML = '<i style="background:#566c86"></i><span></span><small>BOTS</small>'; li.querySelector('span').textContent = `+ ${nb} bot artist${nb === 1 ? '' : 's'}`; $('roomPlayers').appendChild(li); }
   const mode = cfg.mode || 'classic';
   if (mode === 'pic') $('roomMode').textContent = `Picasso · 64×64 canvas · 10:00 to draw · ${hum.length > 8 ? 'first 8 play' : 'up to 8 artists'}`;
+  else if (ARENA[mode]) $('roomMode').textContent = `${modeInfo(mode).nm} · ${modeInfo(mode).tag}${hum.length > XINFO[mode].max ? ` · first ${XINFO[mode].max} play` : ''}`;
   else if (mode !== 'classic') $('roomMode').textContent = mode === 'duo' ? `2V2 team draw · ${hum.length > 4 ? 'first 4 play' : 'bots fill empty spots'} · 3:00 to draw` : `Charades · up to 8 players · 60s turns`;
   $('roomMode').textContent += (cfg.vis === 'open' ? ' · anyone can join' : ' · code only');
   $('hostCtl').hidden = !NET.host; $('guestWait').hidden = NET.host;
   if (NET.host){
-    const cap = mode === 'pic' ? Math.min(8, NET.cfg.max) : NET.cfg.max, humans = Math.min(hum.length, cap); NET.cfg.bots = clamp(NET.cfg.bots, 0, cap - humans); $('rbN').textContent = NET.cfg.bots;
+    const cap = Math.min(NET.cfg.max, mode === 'pic' ? 8 : XINFO[mode] ? XINFO[mode].max : NET.cfg.max), humans = Math.min(hum.length, cap); NET.cfg.bots = clamp(NET.cfg.bots, 0, cap - humans); $('rbN').textContent = NET.cfg.bots;
     $('roomVisSel').innerHTML = [['open', 'ANYONE (LISTED)'], ['code', 'CODE ONLY']].map(([k, l]) => `<button data-v="${k}" aria-pressed="${k === (NET.cfg.vis || 'code')}">${l}</button>`).join('');
     $('roomVisSel').querySelectorAll('button').forEach(b => b.onclick = () => { NET.cfg.vis = b.dataset.v; NET.named.presence({cfg:NET.cfg}).catch(() => {}); updateOpenPresence(); SFX.click(); renderRoom(); toast(NET.cfg.vis === 'open' ? 'Your room now shows in Open Rooms, so anyone can join.' : 'Your room is hidden. Only people with the code can join.'); });
-    const MODES = [['classic', 'CLASSIC'], ['duo', '2V2'], ['cha', 'CHARADES'], ['pic', 'PICASSO']];
-    $('roomModeSel').innerHTML = MODES.map(([k, l]) => `<button data-m="${k}" aria-pressed="${k === mode}">${l}</button>`).join('');
-    $('roomModeSel').querySelectorAll('button').forEach(b => b.onclick = () => { NET.cfg.mode = b.dataset.m; NET.named.presence({cfg:NET.cfg}).catch(() => {}); SFX.click(); renderRoom(); });
+    const rm = modeInfo(mode); $('roomModeNm').textContent = rm.nm; $('roomModeShort').textContent = rm.short; $('roomModeBtn').style.setProperty('--mc', rm.col); modeThumb($('roomModeTh'), rm);
     $('roomTime').hidden = $('roomTimeLbl').hidden = mode !== 'classic'; $('rbStep').style.visibility = mode === 'duo' ? 'hidden' : '';
     seg($('roomTime'), NET.cfg.time, s => { NET.cfg.time = s; NET.named.presence({cfg:NET.cfg}).catch(() => {}); renderRoom(); });
-    const enough = mode === 'duo' ? humans >= 1 : humans + NET.cfg.bots >= 2; $('roomGo').disabled = !enough; $('roomGo').textContent = enough ? 'START' : 'WAITING…';
+    const enough = mode === 'duo' ? humans >= 1 : humans + NET.cfg.bots >= ((XINFO[mode] && XINFO[mode].min) || 2); $('roomGo').disabled = !enough; $('roomGo').textContent = enough ? 'START' : 'WAITING…';
   }
 }
 $('rbMinus').onclick = () => { NET.cfg.bots--; renderRoom(); NET.named && NET.named.presence({cfg:NET.cfg}).catch(() => {}); };
@@ -3177,11 +3376,11 @@ $('roomGo').onclick = () => hostStart();
 function hostStart(){
   if (!NET.named || !NET.host) return;
   const mode = NET.cfg.mode || 'classic';
-  if (mode === 'duo' || mode === 'cha'){
-    const hum = roomHumans().slice(0, XINFO[mode].max);
+  if (mode === 'duo' || mode === 'cha' || ARENA[mode]){
+    const I = XINFO[mode], hum = roomHumans().slice(0, I.max), need = I.min || 2;
     const humans = hum.map((p, i) => ({key:'p:' + p.peer, nm:cleanName(p.presence.nm) || 'Artist ' + (i + 1), kind:p.sameTab ? 'local' : 'remote'}));
-    const nb = mode === 'duo' ? 4 - humans.length : NET.mm ? Math.max(0, 4 - humans.length) : clamp(NET.cfg.bots, 0, XINFO.cha.max - humans.length);
-    if (humans.length + nb < 2){ toast('You need at least 2 players. Add a bot or wait for a friend.'); return; }
+    const nb = mode === 'duo' ? 4 - humans.length : NET.mm ? Math.max(0, (I.fill || 4) - humans.length) : clamp(NET.cfg.bots, 0, I.max - humans.length);
+    if (humans.length + nb < need){ toast(`You need at least ${need} players. Add a bot or wait for a friend.`); return; }
     appMode = 'xhost'; NET.hg = (NET.hg | 0) + 1;
     NET.named.presence({dr:null, vt:null}).catch(() => {});
     xStart(mode, humans, nb, true); updateOpenPresence(); return;
@@ -3196,6 +3395,7 @@ function hostStart(){
   updateOpenPresence();
 }
 function leaveRoom(){
+  closeSheet();
   if (prof.rpend && !NET.noPen) rankedLeave();   // walking out of a ranked match counts as last place
   NET.noPen = false; NET.ranked = false; NET.hostLostAt = 0;
   clearTimeout(NET.joinTimer); NET.mm = false;
@@ -3391,8 +3591,10 @@ $('bFind').onclick = () => { auInit(); startQueue(false); };
 $('bRanked').onclick = () => { auInit(); startQueue(true); };
 function myLobbyPeer(){ const m = NET.lobbyPeers.find(p => p.sameTab); return m ? m.peer : ''; }
 function setLobbyQ(q){ const k = JSON.stringify(q); if (k === MM.lastQ) return; MM.lastQ = k; if (NET.room) NET.room.presence({[qKey()]:q}).catch(() => {}); }
-const mmMax = () => MM.kind === 'd' ? 4 : 8;
-const MM_LBL = {q:'', r:'RANKED ', d:'2V2 ', c:'CHARADES ', p:'PICASSO '};
+const mmMax = () => MM.kind === 'd' ? 4 : MM.kind === 'y' ? 12 : 8;
+const MM_LBL = {q:'', r:'RANKED ', d:'2V2 ', c:'CHARADES ', p:'PICASSO ', b:'BLITZ ', t:'3-COLOR ', o:'COPYCAT ', i:'IMPOSTER ', y:'BATTLE ROYALE '};
+const MM_KIND = {duo:'d', cha:'c', pic:'p', blz:'b', tri:'t', cpy:'o', imp:'i', roy:'y'}, MM_MODE = {};
+for (const k in MM_KIND) MM_MODE[MM_KIND[k]] = k;
 function startQueue(kind){
   if (kind === undefined) kind = MM.kind; else if (kind === true) kind = 'r'; else if (kind === false) kind = 'q';
   if (MM.lastQ && MM.lastQ !== 'null') setLobbyQ(null);
@@ -3411,7 +3613,7 @@ function startQueue(kind){
 }
 function stopQueue(keep){ MM.on = false; clearInterval(MM.timer); if (!keep) setLobbyQ(null); }
 $('qCancel').onclick = () => { stopQueue(); if (NET.named) leaveRoom(); appMode = 'menu'; show('scrMenu'); refreshMenu(); };
-$('qBots').onclick = () => { stopQueue(); if (NET.named) leaveRoom(); if (MM.kind === 'd' || MM.kind === 'c' || MM.kind === 'p'){ xLocal({d:'duo', c:'cha', p:'pic'}[MM.kind]); return; } startLocal({humans:[meHuman()], bots:7, time:120}); };
+$('qBots').onclick = () => { stopQueue(); if (NET.named) leaveRoom(); if (MM_MODE[MM.kind]){ xLocal(MM_MODE[MM.kind]); return; } startLocal({humans:[meHuman()], bots:7, time:120}); };
 $('rFind').onclick = () => { auInit(); resTimers.forEach(clearTimeout); if (NET.named) leaveRoom(); GS = null; showView(null); startQueue(RES.kind || (RES.ranked ? 'r' : 'q')); };
 const qKey = () => MM.kind + GAME_V;   // separate queues for each mode and each game version
 const qOf = p => { const q = p.presence && p.presence[qKey()]; return q && typeof q.t === 'number' ? q : null; };
@@ -3431,7 +3633,7 @@ function renderQueue(rem){
   $('scrQueue').querySelector('.loader').classList.toggle('found', found);
   $('qBarWrap').classList.toggle('fill', found);
   if (found){ $('qTitle').textContent = MM_LBL[MM.kind] + 'MATCH FOUND!'; $('qSub').textContent = rem > 0 ? `Loading the battle in ${rem}…` : 'Loading the battle…'; $('qBar').style.width = clamp((12 - rem) / 12 * 100, 6, 100) + '%'; }
-  else { $('qTitle').textContent = MM.ranked ? 'FINDING RANKED MATCH' : MM.kind === 'd' ? 'FINDING 2V2 PLAYERS' : MM.kind === 'c' ? 'FINDING CHARADES PLAYERS' : MM.kind === 'p' ? 'FINDING PICASSO PLAYERS' : 'FINDING PLAYERS'; $('qSub').textContent = inRoom ? 'You are in a lobby. Waiting for more artists to join…' : MM.ranked ? `You are ${tierOf(prof.rp).name} with ${prof.rp} RP. Looking for ranked players…` : 'Looking for artists who are online right now.'; $('qBar').style.width = ''; }
+  else { $('qTitle').textContent = MM.ranked ? 'FINDING RANKED MATCH' : 'FINDING ' + MM_LBL[MM.kind] + 'PLAYERS'; $('qSub').textContent = inRoom ? 'You are in a lobby. Waiting for more artists to join…' : MM.ranked ? `You are ${tierOf(prof.rp).name} with ${prof.rp} RP. Looking for ranked players…` : 'Looking for artists who are online right now.'; $('qBar').style.width = ''; }
   const names = inRoom ? hum.map(p => ({nm:cleanName(p.presence.nm) || 'Artist', me:p.sameTab, host:p.presence.host === 1, rk:MM.ranked ? tierOf(clamp(p.presence.rp | 0, 0, 9999)).name : ''})) : [{nm:myName(), me:true, rk:MM.ranked ? tierOf(prof.rp).name : ''}];
   const key = JSON.stringify(names);
   if (key !== MM.lastList){ MM.lastList = key;
@@ -3472,7 +3674,7 @@ async function mmTick(){
     renderQueue(rem);
     if (MM.cdEnd && (now >= MM.cdEnd || hum >= mmMax())){
       MM.cdEnd = 0; setLobbyQ({t:MM.t, h:NET.code, n:hum, g:1}); stopQueue(true);
-      NET.cfg = {max:mmMax(), bots:0, time:120, mode:MM.kind === 'd' ? 'duo' : MM.kind === 'c' ? 'cha' : MM.kind === 'p' ? 'pic' : 'classic'}; hostStart();
+      NET.cfg = {max:mmMax(), bots:0, time:120, mode:MM_MODE[MM.kind] || 'classic'}; hostStart();
     }
   } else {
     const hum = roomHumans(), idx = hum.findIndex(p => p.sameTab);
@@ -3490,7 +3692,14 @@ async function mmTick(){
 // ---------- other gamemodes: 2v2 team canvas and charades ----------
 // The host (or your own device, in a game with only bots) runs the match and shares a snapshot `x`;
 // every device, the host included, draws the screen from that same snapshot.
-const XINFO = {duo:{name:'2V2', max:4, time:180}, cha:{name:'CHARADES', max:8, turn:60}};
+const XINFO = {duo:{name:'2V2', max:4, time:180}, cha:{name:'CHARADES', max:8, turn:60},
+  blz:{name:'BLITZ', max:8, rounds:5, time:30, fill:4, bots:3},
+  tri:{name:'3-COLOR', max:8, rounds:3, time:90, fill:4, bots:3},
+  cpy:{name:'COPYCAT', max:8, rounds:3, time:45, show:5, fill:4, bots:3},
+  imp:{name:'IMPOSTER', max:8, rounds:3, time:60, vote:30, fill:5, bots:4, min:3},
+  roy:{name:'BATTLE ROYALE', max:12, rounds:0, time:45, fill:8, bots:11, min:3}};
+// modes where everyone draws at the same time each round
+const ARENA = {blz:1, tri:1, cpy:1, imp:1, roy:1};
 let XG = null;
 const XC = {me:'', mid:'', kind:'', ph:'', ti:-1, s:null, endAt:0, resShown:'', gseq:0, gl:[], rdy:false, lastXc:'', lastXcT:0, cvSrc:'', partner:'', bot:null, pa:{a:0}, ds:null, lastPub:0, feedKey:'', statKey:'', lastSec:-1};
 const xOn = () => appMode === 'xhost' || appMode === 'xclient' || appMode === 'xlocal';
@@ -3548,6 +3757,9 @@ function xStart(kind, humans, nb, net){
   if (kind === 'duo'){
     XG.th = nextTheme(BOT_THEMES); XG.ph = 'theme'; XG.end = performance.now() + 4200;
     XG.tm = [[pl[0].key, pl[1].key], [pl[2].key, pl[3].key]];
+  } else if (ARENA[kind]){
+    Object.assign(XG, {r:-1, out:[], outR:{}, rs:{}, hist:[], usedPairs:new Set(), lastImp:''});
+    arenaNext(performance.now()); return;
   } else {
     XG.order = pl.map(p => p.key).sort(() => Math.random() - .5); XG.ti = -1; XG.feed = [];
     chaNextTurn();
@@ -3558,7 +3770,7 @@ function xLocal(kind){
   if (kind === 'pic'){ auInit(); if (NET.named) leaveRoom(); startLocal({humans:[meHuman()], bots:7, time:600, big:true}); return; }
   auInit(); if (NET.named) leaveRoom();
   appMode = 'xlocal'; lastX = kind;
-  xStart(kind, [{key:'me', nm:myName(), kind:'local'}], kind === 'duo' ? 3 : 5, false);
+  xStart(kind, [{key:'me', nm:myName(), kind:'local'}], kind === 'duo' ? 3 : ARENA[kind] ? XINFO[kind].bots : 5, false);
 }
 let lastX = 'duo';
 function xSnapshot(){
@@ -3566,6 +3778,7 @@ function xSnapshot(){
   G.pl.forEach(p => { nm[p.key] = p.nm; if (p.kind === 'bot') bs[p.key] = [p.seed, p.skill]; });
   const S = {k:G.kind, mid:G.mid, ph:G.ph, rem:Math.max(0, Math.round((G.end - now) / 100) / 10), nm, pl:G.pl.map(p => p.key)};
   if (G.kind === 'duo'){ Object.assign(S, {th:G.th, tm:G.tm, bs, rdy:[...G.rdy]}); if (G.res) S.res = G.res; if (G.tt) S.tt = G.tt; }
+  else if (ARENA[G.kind]) arenaSnap(G, S, bs);
   else {
     Object.assign(S, {ti:G.ti, tn:G.order.length, dr:G.t ? G.t.dr : '', sc:G.sc, fd:G.feed.slice(-8), ok:G.t ? [...G.t.ok.keys()] : []});
     if (G.t){ if (G.ph === 'turn') { S.w = obf(G.t.w, G.mid); S.hint = chaHint(G.t, now); } else S.rw = G.t.w; }
@@ -3604,7 +3817,8 @@ function xHostTick(now){
         G.ph = 'res'; G.end = now; xPublish(true);
       }
     }
-  } else {
+  } else if (ARENA[G.kind]) arenaHostTick(now, here);
+  else {
     const t = G.t;
     if (G.ph === 'intro' && now >= G.end){ G.ph = 'turn'; t.start = now; G.end = now + XINFO.cha.turn * 1000; xPublish(true); }
     else if (G.ph === 'turn'){
@@ -3910,20 +4124,359 @@ function chaResults(S){
   xAward(20 + (S.sc[XC.me] | 0) * 6, myPlace === 1);
 }
 
+// ---------- everyone draws at once: blitz, 3-color, copycat, imposter, battle royale ----------
+// Each round everyone draws the same prompt at the same time. Every player's device sends its own drawing in its presence (`xd`),
+// bot pictures are made the same way on every device from the bot's seed, and the host scores the round (bot judges, or the
+// pixel match for Copycat) and shares the scores in the snapshot.
+const IMP_PAIRS = [['CAT', 'DOG'], ['PIZZA', 'TACO'], ['BURGER', 'TACO'], ['ICE CREAM', 'CUPCAKE'], ['DONUT', 'CUPCAKE'], ['ROCKET', 'AIRPLANE'], ['UFO', 'PLANET'], ['CASTLE', 'HOUSE'], ['HOUSE', 'HAUNTED HOUSE'], ['GHOST', 'ZOMBIE'], ['VAMPIRE', 'ZOMBIE'], ['SNOWMAN', 'PENGUIN'], ['FISH', 'SHARK'], ['SHARK', 'WHALE'], ['CAR', 'TRAIN'], ['PIRATE SHIP', 'SUBMARINE'], ['FLOWER', 'TREE'], ['VOLCANO', 'CAMPFIRE'], ['FROG', 'TURTLE'], ['PUMPKIN', 'APPLE'], ['DRAGON', 'DINOSAUR'], ['NINJA', 'KNIGHT'], ['SUPERHERO', 'WIZARD'], ['MERMAID', 'OCTOPUS'], ['BEE', 'BUTTERFLY'], ['SPIDER', 'OCTOPUS'], ['OWL', 'DUCK'], ['BUNNY', 'FOX'], ['PANDA', 'PENGUIN'], ['LIGHTHOUSE', 'CASTLE'], ['HOT AIR BALLOON', 'AIRPLANE'], ['CROWN', 'TREASURE CHEST'], ['ASTRONAUT', 'ROBOT'], ['ALIEN INVASION', 'UFO'], ['BEACH DAY', 'TROPICAL ISLAND'], ['RAINBOW', 'SUNSET'], ['SKATEBOARD', 'SNEAKERS'], ['APPLE', 'WATERMELON'], ['SNAKE', 'DRAGON'], ['MONSTER', 'ALIEN INVASION']];
+const PICO_RGB = PALS.pico.c.map(h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)));
+const colDist = (a, b) => { const x = PICO_RGB[a] || [0, 0, 0], y = PICO_RGB[b] || [0, 0, 0]; return Math.hypot(x[0] - y[0], x[1] - y[1], x[2] - y[2]); };
+// 3 colours that are easy to tell apart (white is always there too)
+function pick3(){
+  const pool = [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15];
+  for (let t = 0; t < 80; t++){ const c = pool.slice().sort(() => Math.random() - .5).slice(0, 3); if (colDist(c[0], c[1]) > 130 && colDist(c[0], c[2]) > 130 && colDist(c[1], c[2]) > 130 && c.every(x => colDist(x, 7) > 120)) return c.sort((a, b) => a - b); }
+  return [0, 8, 12];
+}
+// a bot picture painted with only the allowed colours: each colour becomes the closest allowed one
+function recolor(g, allowed){ const map = new Uint8Array(32); for (let c = 0; c < 32; c++){ let best = allowed[0], bd = 1e9; for (const a of allowed){ const d = colDist(c, a); if (d < bd){ bd = d; best = a; } } map[c] = best; } return g.map(v => map[v]); }
+function bgOf(g){ const n = Math.round(Math.sqrt(g.length)), c = new Array(32).fill(0); for (let i = 0; i < n; i++) for (const j of [i, (n - 1) * n + i, i * n, i * n + n - 1]) c[g[j]]++; return c.indexOf(Math.max(...c)); }
+// a bot redrawing the Copycat picture from memory: a little off-centre, with some parts forgotten or simplified
+function copyBot(t, seed, skill){
+  const R = mulberry(seed), bg = bgOf(t), o = new Uint8Array(CELLS), sh = 2 - skill;
+  const dx = Math.round((R() * 2 - 1) * sh), dy = Math.round((R() * 2 - 1) * sh), lose = [.78, .64, .5][skill], forget = new Uint8Array(64);
+  for (let b = 0; b < 64; b++) forget[b] = R() < lose ? (R() < .5 ? 1 : 2) : 0;   // 4x4 blocks: 1 = left out, 2 = drawn in one colour
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++){
+    const sx = x - dx, sy = y - dy; let v = sx >= 0 && sy >= 0 && sx < N && sy < N ? t[sy * N + sx] : bg;
+    const f = forget[(y >> 2) * 8 + (x >> 2)];
+    if (v !== bg && f === 1) v = bg; else if (v !== bg && f === 2) v = t[((y >> 2) * 4 + 1) * N + (x >> 2) * 4 + 1] === bg ? v : t[((y >> 2) * 4 + 1) * N + (x >> 2) * 4 + 1];
+    o[y * N + x] = v;
+  }
+  return o;
+}
+// Copycat score: how many pixels match the original. Right colour in the right place counts fully, one pixel off counts
+// 60%, a close colour a little. Empty background doesn't count, so you can't score by leaving the canvas blank.
+function copyScore(t, g){
+  if (!g || blankCanvas(g)) return 1;
+  const bt = bgOf(t), bd = bgOf(g); let tot = 0, got = 0;
+  const near = (src, i, col) => { const x = i % N, y = (i / N) | 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++){ const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < N && yy < N && src[yy * N + xx] === col) return true; } return false; };
+  for (let i = 0; i < CELLS; i++){
+    const a = t[i] !== bt, b = g[i] !== bd; if (!a && !b) continue;
+    tot++;
+    if (a && g[i] === t[i]) got += 1;
+    else if (a ? near(g, i, t[i]) : near(t, i, g[i])) got += .6;
+    else if (a && b) got += .35 * Math.max(0, 1 - colDist(g[i], t[i]) / 220);
+  }
+  let acc = tot ? got / tot : 0; acc = acc * .88 + (bt === bd ? .12 : 0);
+  return clamp(1 + 11 * (acc - .18), 1, 10);
+}
+const ARENA_ART = new Map();
+function arenaTarget(S){ const k = 't:' + S.mid + ':' + S.r; if (!ARENA_ART.has(k)) ARENA_ART.set(k, makeArt(S.th, (S.cs >>> 0) || 1, 2)); return ARENA_ART.get(k); }
+function arenaWords(S){ return S.rw ? {w:S.rw, iw:S.riw, ik:S.rik} : {w:deobf(S.w || '', S.mid), iw:deobf(S.iw || '', S.mid), ik:deobf(S.ik || '', S.mid)}; }
+const arenaWord = (S, key) => { const W = arenaWords(S); return key === W.ik ? W.iw : W.w; };
+function arenaBotArt(S, key){
+  const k = S.mid + ':' + S.r + ':' + key; if (ARENA_ART.has(k)) return ARENA_ART.get(k);
+  if (ARENA_ART.size > 120) ARENA_ART.clear();
+  const b = (S.bs || {})[key] || [1, 1], seed = ((b[0] >>> 0) + (S.r | 0) * 7919) >>> 0, sk = clamp(b[1] | 0, 0, 2);
+  let g;
+  if (S.k === 'cpy') g = copyBot(arenaTarget(S), seed, sk);
+  else if (S.k === 'imp') g = makeArt(arenaWord(S, key), seed, sk);
+  else { g = makeArt(S.th, seed, sk); if (S.k === 'tri') g = recolor(g, (S.c3 || [0, 8, 12]).concat(7)); }
+  ARENA_ART.set(k, g); return g;
+}
+// anyone's drawing for this round (null if they left before sending it)
+function arenaGrid(S, key){
+  if (key.startsWith('b:')) return arenaBotArt(S, key);
+  if (key === XC.me && XC.myGrid && XC.myR === S.mid + ':' + S.r) return XC.myGrid;
+  if (key === XC.me && ED.grid && ED.n === 32 && S.ph === 'collect') return ED.grid.slice();
+  const pp = xPeerOf(key), xd = pp && pp.presence && pp.presence.xd;
+  if (xd && xd.m === S.mid && xd.r === S.r && typeof xd.e === 'string') return decGrid(xd.e);
+  if (XG && XG.cache && XG.cache[key]) return XG.cache[key];
+  return null;
+}
+const arenaAlive = S => (S.pl || []).filter(k => !(S.out || []).includes(k));
+const arenaPts = (S, v) => S.k === 'imp' ? `${v | 0} PTS` : ((v | 0) / 10).toFixed(1);
+
+// ---------- host ----------
+function arenaSnap(G, S, bs){
+  Object.assign(S, {r:G.r, rn:XINFO[G.kind].rounds, bs, sc:G.sc, out:G.out, rdy:[...G.rdy]});
+  if (G.kind === 'imp'){
+    if (G.ph === 'reveal' || G.ph === 'res'){ S.rw = G.th; S.riw = G.iw; S.rik = G.ik; S.vt = G.votes; S.ct = G.caught ? 1 : 0; }
+    else { S.w = obf(G.th, G.mid); S.iw = obf(G.iw, G.mid); S.ik = obf(G.ik, G.mid); }
+    if (G.ph === 'vote') S.vd = Object.keys(G.votes);
+  } else S.th = G.th;
+  if (G.kind === 'tri') S.c3 = G.c3;
+  if (G.kind === 'cpy') S.cs = G.cs;
+  if (G.ph === 'score' || G.ph === 'reveal' || G.ph === 'res') S.rs = G.rs;
+  if (G.ko && G.ph === 'score') S.ko = G.ko;
+  if (G.kind === 'roy') S.or = G.outR;
+  if (G.ph === 'res'){ S.rk = G.rank; if (G.sim) S.sim = G.sim; }
+}
+function arenaNext(now){
+  const G = XG, I = XINFO[G.kind], alive = G.pl.filter(p => !G.out.includes(p.key));
+  if ((I.rounds && G.r + 1 >= I.rounds) || (G.kind === 'roy' && alive.length <= 1)){ arenaFinish(now); return; }
+  G.r++; G.rs = {}; G.rdy = new Set(); G.cache = {}; G.cacheE = {}; G.votes = {}; G.ko = null; G.caught = false; G.grids = null;
+  if (G.kind === 'imp'){
+    const fresh = IMP_PAIRS.filter((q, i) => !G.usedPairs.has(i)), pi = IMP_PAIRS.indexOf(fresh[Math.floor(Math.random() * fresh.length)]);
+    G.usedPairs.add(pi); const pr = IMP_PAIRS[pi], flip = Math.random() < .5;
+    G.th = pr[flip ? 1 : 0]; G.iw = pr[flip ? 0 : 1];
+    const cand = G.pl.filter(p => p.key !== G.lastImp); G.ik = cand[Math.floor(Math.random() * cand.length)].key; G.lastImp = G.ik;
+  } else G.th = nextTheme(BOT_THEMES);
+  if (G.kind === 'tri') G.c3 = pick3();
+  if (G.kind === 'cpy') G.cs = Math.floor(Math.random() * 1e9) + 1;
+  G.ph = 'intro'; G.end = now + (G.kind === 'cpy' ? 2600 : G.kind === 'imp' ? 5500 : 4000);
+  xPublish(true);
+}
+function arenaDraw(now){ const G = XG; G.ph = 'draw'; G.end = now + XINFO[G.kind].time * 1000; G.rdy = new Set(); xPublish(true); }
+function arenaScore(now){
+  const G = XG, S = xSnapshot(), R = mulberry(Date.now() & 0xffff), alive = G.pl.filter(p => !G.out.includes(p.key));
+  G.grids = {};
+  for (const p of alive){
+    const g = arenaGrid(S, p.key) || blankArt(false); G.grids[p.key] = g;
+    if (G.kind === 'imp') continue;
+    let s;
+    if (G.kind === 'cpy') s = copyScore(arenaTarget(S), g);
+    else if (blankCanvas(g)) s = 1;
+    else { let sum = 0; for (let j = 0; j < 3; j++) sum += judge(g, R, G.th); s = sum / 3; }
+    G.rs[p.key] = Math.round(s * 10); G.sc[p.key] += G.rs[p.key];
+  }
+  if (G.kind === 'imp'){
+    G.ph = 'vote'; G.end = now + XINFO.imp.vote * 1000; G.bvt = {};
+    for (const p of G.pl) if (p.kind === 'bot') G.bvt[p.key] = now + 3000 + Math.random() * 14000;
+    xPublish(true); return;
+  }
+  if (G.kind === 'roy') arenaKnockOut(alive.map(p => p.key));
+  G.ph = 'score'; G.end = now + (G.kind === 'blz' ? 6500 : 8500); xPublish(true);
+}
+// battle royale: about a third of the artists left go out each round, lowest round score first
+function arenaKnockOut(al){
+  const G = XG, k = Math.min(al.length - 1, Math.max(1, Math.round(al.length / 3)));
+  const order = al.slice().sort((a, b) => ((G.rs[a] | 0) - (G.rs[b] | 0)) || ((G.sc[a] | 0) - (G.sc[b] | 0)) || (Math.random() - .5));
+  G.ko = order.slice(0, k); G.out.push(...G.ko); G.ko.forEach(key => G.outR[key] = G.r + 1);
+}
+// when every real player is out, the bots finish the battle on their own so nobody has to sit and watch
+function arenaSimulate(now){
+  const G = XG, bs = {}; G.pl.forEach(p => { if (p.kind === 'bot') bs[p.key] = [p.seed, p.skill]; });
+  const R = mulberry(Date.now() & 0xffff); let n = 0;
+  while (G.pl.filter(p => !G.out.includes(p.key)).length > 1 && n < 20){
+    G.r++; n++; G.th = BOT_THEMES[Math.floor(Math.random() * BOT_THEMES.length)]; G.rs = {};
+    const al = G.pl.filter(p => !G.out.includes(p.key)), S = {k:'roy', mid:G.mid, r:G.r, th:G.th, bs};
+    for (const p of al){ const s = p.kind === 'bot' ? judge(arenaBotArt(S, p.key), R, G.th) : 1; G.rs[p.key] = s * 10; G.sc[p.key] += s * 10; }
+    arenaKnockOut(al.map(p => p.key));
+  }
+  G.sim = n; arenaFinish(now);
+}
+function arenaFinish(now){
+  const G = XG;
+  if (G.kind === 'roy'){ const al = G.pl.filter(p => !G.out.includes(p.key)).map(p => p.key).sort((a, b) => ((G.rs[b] | 0) - (G.rs[a] | 0)) || ((G.sc[b] | 0) - (G.sc[a] | 0))); G.rank = al.concat(G.out.slice().reverse()); }
+  else G.rank = G.pl.map(p => p.key).sort((a, b) => (G.sc[b] | 0) - (G.sc[a] | 0));
+  G.ph = 'res'; G.end = now; xPublish(true);
+}
+function arenaBotVote(p){
+  const G = XG, my = p.key === G.ik ? G.iw : G.th; let best = '', bs = 1e9;
+  for (const q of G.pl){ if (q.key === p.key) continue; const g = G.grids && G.grids[q.key], P = g ? (recognize(g)[my] || 0) : 0, v = P + (Math.random() * 2 - 1) * [.5, .3, .15][p.skill | 0]; if (v < bs){ bs = v; best = q.key; } }
+  return best;
+}
+function arenaReveal(now){
+  const G = XG, cnt = {}; for (const v of Object.values(G.votes)) cnt[v] = (cnt[v] | 0) + 1;
+  const top = Math.max(0, ...Object.values(cnt)); G.caught = top > 0 && (cnt[G.ik] | 0) === top;
+  G.rs = {}; G.pl.forEach(p => { G.rs[p.key] = 0; });
+  let missed = 0;
+  for (const [vk, t] of Object.entries(G.votes)){ if (vk === G.ik) continue; if (t === G.ik) G.rs[vk] += 2; else missed++; }
+  // the imposter scores for every wrong vote, plus 3 for getting away
+  G.rs[G.ik] = (G.rs[G.ik] | 0) + missed + (G.caught ? 0 : 3);
+  for (const k in G.rs) G.sc[k] = (G.sc[k] | 0) + G.rs[k];
+  G.ph = 'reveal'; G.end = now + 9500; xPublish(true);
+}
+function arenaHostTick(now, here){
+  const G = XG, I = XINFO[G.kind], alive = p => !G.out.includes(p.key);
+  if (G.ph === 'intro' && now >= G.end){ if (G.kind === 'cpy'){ G.ph = 'show'; G.end = now + I.show * 1000; xPublish(true); } else arenaDraw(now); }
+  else if (G.ph === 'show' && now >= G.end) arenaDraw(now);
+  else if (G.ph === 'draw'){
+    for (const p of G.pl) if (p.kind === 'remote' && !G.rdy.has(p.key)){ const pp = xPeerOf(p.key); if (pp && pp.presence && pp.presence.xr === G.mid + ':' + G.r){ G.rdy.add(p.key); xPublish(true); } }
+    const hum = G.pl.filter(p => p.kind !== 'bot' && here(p.key) && alive(p));
+    if (!hum.length || hum.every(p => G.rdy.has(p.key))) G.end = Math.min(G.end, now);
+    if (now >= G.end){ G.ph = 'collect'; G.end = now + 2600; xPublish(true); }
+  }
+  else if (G.ph === 'collect'){
+    for (const p of G.pl) if (p.kind === 'remote'){ const pp = xPeerOf(p.key), xd = pp && pp.presence && pp.presence.xd; if (xd && xd.m === G.mid && xd.r === G.r && typeof xd.e === 'string' && G.cacheE[p.key] !== xd.e){ G.cacheE[p.key] = xd.e; G.cache[p.key] = decGrid(xd.e); } }
+    if (now >= G.end) arenaScore(now);
+  }
+  else if (G.ph === 'vote'){
+    for (const p of G.pl){
+      if (p.kind === 'remote'){ const pp = xPeerOf(p.key), xv = pp && pp.presence && pp.presence.xv; if (xv && xv.m === G.mid && xv.r === G.r && typeof xv.v === 'string' && xv.v !== p.key && G.pl.some(q => q.key === xv.v) && G.votes[p.key] !== xv.v){ G.votes[p.key] = xv.v; xPublish(true); } }
+      else if (p.kind === 'bot' && !G.votes[p.key] && now >= G.bvt[p.key]){ G.votes[p.key] = arenaBotVote(p); xPublish(true); }
+    }
+    const voters = G.pl.filter(p => p.kind === 'bot' || here(p.key));
+    if (voters.every(p => G.votes[p.key])) G.end = Math.min(G.end, now + 1200);
+    if (now >= G.end) arenaReveal(now);
+  }
+  else if ((G.ph === 'score' || G.ph === 'reveal') && now >= G.end){
+    if (G.kind === 'roy' && !G.pl.some(p => p.kind !== 'bot' && here(p.key) && alive(p)) && G.pl.filter(alive).length > 1) arenaSimulate(now); else arenaNext(now);
+  }
+}
+
+// ---------- every device ----------
+function arenaRender(S, changed){
+  const out = (S.out || []).includes(XC.me);
+  if (S.ph === 'intro' && changed) arenaIntro(S, out);
+  else if (S.ph === 'show' && changed) arenaShow(S);
+  else if (S.ph === 'draw'){ if (changed){ if (out) arenaSpectate(S); else arenaEnterDraw(S); } if (!out) arenaStatus(S); }
+  else if (S.ph === 'collect' && changed){ if (!out) arenaFinal(S); showCollecting(); if (out) $('reelSub').textContent = 'Scoring the drawings…'; }
+  else if (S.ph === 'score' && changed) arenaRound(S);
+  else if (S.ph === 'vote'){ if (changed) arenaVote(S); else arenaVoteUi(S); }
+  else if (S.ph === 'reveal' && changed) arenaReveal2(S);
+  else if (S.ph === 'res' && XC.resShown !== S.mid){ XC.resShown = S.mid; xShowRes(S); }
+}
+const arenaRoundTxt = S => { const I = XINFO[S.k]; return I.rounds ? `ROUND ${S.r + 1} OF ${I.rounds}` : `ROUND ${S.r + 1} · ${arenaAlive(S).length} LEFT`; };
+function arenaIntro(S, out){
+  ED.enabled = false; musicStop(); resTimers.forEach(clearTimeout); clearTimeout(reelTimer);
+  const I = XINFO[S.k], land = () => { const r = $('reel'); r.classList.remove('land'); void r.offsetWidth; r.classList.add('land'); SFX.land(); };
+  if (S.k === 'imp'){
+    showView('vTheme'); $('reelLbl').textContent = arenaRoundTxt(S) + ' · YOUR WORD IS'; $('reel').textContent = arenaWord(S, XC.me); land();
+    $('reelSub').textContent = 'One artist got a different word. Nobody knows who, maybe not even them.';
+    noteTheme(arenaWord(S, XC.me));
+  } else if (S.k === 'cpy'){
+    showView('vTheme'); $('reelLbl').textContent = arenaRoundTxt(S); $('reel').textContent = 'MEMORIZE!'; land();
+    $('reelSub').textContent = `A picture shows for ${I.show} seconds. Then draw it from memory.`;
+  } else {
+    noteTheme(S.th); playReel(S.th, BOT_THEMES);
+    $('reelLbl').textContent = out ? "YOU'RE OUT · THE THEME IS" : arenaRoundTxt(S) + ' · THE THEME IS';
+    if (S.k === 'tri' && Array.isArray(S.c3)){ $('reelPal').hidden = false; $('reelPal').innerHTML = 'YOUR COLORS ' + S.c3.concat(7).map(c => `<i style="background:${PALS.pico.c[c]}"></i>`).join(''); }
+  }
+}
+function arenaShow(S){
+  showView('vTheme'); $('reelLbl').textContent = 'COPY THIS: ' + S.th; $('reel').hidden = true;
+  const cv = $('reelCv'); cv.hidden = false; drawGrid(cv, arenaTarget(S), 'pico'); SFX.reveal(2);
+  $('reelSub').textContent = 'Memorize it!';
+}
+function arenaSpectate(S){
+  ED.enabled = false; musicStop(); showView('vTheme'); $('reelLbl').textContent = "YOU'RE OUT"; $('reel').textContent = 'SPECTATING';
+  $('reelSub').textContent = `${arenaAlive(S).length} artists are still drawing ${S.th}.`;
+}
+function arenaEnterDraw(S){
+  showView('vDraw'); $('vDraw').className = 'view arena';
+  edStart('pico', 32, S.k === 'tri' && Array.isArray(S.c3) ? S.c3.concat(7) : null);
+  $('dTheme').parentNode.firstChild.textContent = S.k === 'cpy' ? 'COPY: ' : 'DRAW: ';
+  $('dTheme').textContent = S.k === 'imp' ? arenaWord(S, XC.me) : S.th;
+  $('dDone').hidden = false; $('dDone').textContent = 'DONE'; $('dDone').disabled = false;
+  XC.rdy = false; XC.lastXd = ''; XC.lastXdT = 0; XC.myGrid = null; XC.statKey = '';
+  musicStart(); lastTickSec = -1;
+  if (NET.named) NET.named.presence({xr:0, xd:null, xv:null}).catch(() => {});
+  if (S.k === 'tri') setTimeout(() => toast('Only these 3 colors and white this round!'), 300);
+}
+function arenaStatus(S){
+  const rd = new Set(S.rdy || []), nOut = (S.out || []).length;
+  const h = arenaAlive(S).map(k => `<span class="who${rd.has(k) ? ' done' : ''}">${esc(xName(S, k))}${rd.has(k) ? ' ✓' : ''}</span>`).join('') + (nOut ? `<span class="who" style="opacity:.6">${nOut} OUT</span>` : '');
+  if (h !== XC.statKey){ XC.statKey = h; $('dStatus').innerHTML = h; }
+}
+function arenaFinal(S){
+  if (!ED.grid || ED.n !== 32) return;
+  XC.myGrid = ED.grid.slice(); XC.myR = S.mid + ':' + S.r; ED.enabled = false; musicStop(); SFX.end();
+  if (NET.named) NET.named.presence({xd:{m:S.mid, r:S.r, e:encGrid(XC.myGrid)}}).catch(() => {});
+  XC.arts = (XC.arts || []).filter(a => a.r !== S.r).concat({r:S.r, th:S.k === 'imp' ? arenaWord(S, XC.me) : S.th, g:XC.myGrid, s:null});
+}
+// during a round my drawing goes out every 1.5s, so the host has it even if the last send gets lost
+function arenaTick(now, S){
+  if (S.ph === 'draw' && !(S.out || []).includes(XC.me) && NET.named && ED.grid && ED.n === 32 && now - (XC.lastXdT || 0) > 1500){
+    XC.lastXdT = now; const e = encGrid(ED.grid);
+    if (e !== XC.lastXd){ XC.lastXd = e; NET.named.presence({xd:{m:S.mid, r:S.r, e}}).catch(() => {}); }
+  }
+  const left = Math.max(0, Math.ceil((XC.endAt - now) / 1000));
+  if (S.ph === 'show' && !$('vTheme').hidden) $('reelSub').textContent = `Memorize it! ${left}`;
+  const nx = $('xrNext'); if (nx && !$('vXRes').hidden && nx.textContent !== String(left)) nx.textContent = left;
+}
+function arenaCard(S, key, o = {}){
+  const g = o.grid || arenaGrid(S, key) || blankArt(false), d = document.createElement(o.button ? 'button' : 'div');
+  d.className = 'acard' + (key === XC.me ? ' me' : '') + (o.cls ? ' ' + o.cls : '');
+  d.innerHTML = `${o.tag ? `<span class="tag">${o.tag}</span>` : ''}<div class="cv"></div><b></b>${o.sc != null ? `<span class="sc">${o.sc}</span>` : ''}${o.sub ? `<small>${o.sub}</small>` : ''}`;
+  d.querySelector('b').textContent = o.nm || xName(S, key);
+  d.querySelector('.cv').appendChild(smallCanvas(g, 'pico', 128));
+  return d;
+}
+function arenaChrome(final){ $('xrXp').hidden = !final; $('xrBtns').hidden = !final; if (!final) $('xrWait').hidden = true; ED.enabled = false; musicStop(); showView('vXRes'); $('vXRes').scrollTop = 0; }
+function arenaRound(S){
+  arenaChrome(false);
+  const I = XINFO[S.k], out = new Set(S.out || []), ko = new Set(S.ko || []), rs = S.rs || {};
+  const keys = (S.pl || []).filter(k => !out.has(k) || ko.has(k)).sort((a, b) => (rs[b] | 0) - (rs[a] | 0));
+  $('xrLbl').textContent = `${I.name} · ${arenaRoundTxt(Object.assign({}, S, {out:[...out].filter(k => !ko.has(k))}))}`;
+  $('xrTitle').textContent = (S.k === 'cpy' ? 'COPY: ' : 'THEME: ') + S.th;
+  const body = $('xrBody'), last = I.rounds ? S.r + 1 >= I.rounds : arenaAlive(S).length <= 1;
+  let banner = '';
+  if (S.k === 'roy') banner = ko.has(XC.me) ? 'YOU GOT KNOCKED OUT!' : out.has(XC.me) ? `${ko.size} MORE KNOCKED OUT` : arenaAlive(S).length <= 1 ? 'YOU WIN THE BATTLE!' : `YOU SURVIVED! ${arenaAlive(S).length} LEFT`;
+  else if (keys[0] === XC.me) banner = 'BEST DRAWING THIS ROUND!';
+  body.innerHTML = (banner ? `<div class="xbanner">${banner}</div>` : '') + '<div class="agrid"></div>' + `<p class="anext">${last ? 'Final results' : 'Next round'} in <b id="xrNext"></b></p>`;
+  const grid = body.querySelector('.agrid');
+  if (S.k === 'cpy') grid.appendChild(arenaCard(S, '', {grid:arenaTarget(S), nm:'The original', cls:'orig', tag:'ORIGINAL'}));
+  keys.forEach(k => grid.appendChild(arenaCard(S, k, {sc:((rs[k] | 0) / 10).toFixed(1) + ' / 10', sub:S.k === 'roy' ? '' : `Total ${arenaPts(S, S.sc[k])}`, cls:ko.has(k) ? 'ko' : '', tag:ko.has(k) ? 'OUT' : ''})));
+  const mine = (XC.arts || []).find(a => a.r === S.r); if (mine && rs[XC.me] != null) mine.s = (rs[XC.me] | 0) / 10;
+  if (keys[0] === XC.me || (S.k === 'roy' && !out.has(XC.me))) SFX.unlock(); else SFX.land();
+}
+function arenaVote(S){
+  arenaChrome(false);
+  if (XC.voteR !== S.mid + ':' + S.r){ XC.vote = ''; XC.voteR = S.mid + ':' + S.r; }
+  $('xrLbl').textContent = 'IMPOSTER · ' + arenaRoundTxt(S); $('xrTitle').textContent = 'WHO IS THE IMPOSTER?';
+  const body = $('xrBody');
+  body.innerHTML = `<p class="sub" style="text-align:center;margin:0">Your word was <b style="color:var(--y)">${esc(arenaWord(S, XC.me))}</b>. Tap the drawing that doesn't fit.</p><div class="agrid"></div><p class="anext" id="xrVst"></p><p class="anext">Voting ends in <b id="xrNext"></b></p>`;
+  const grid = body.querySelector('.agrid');
+  (S.pl || []).forEach(k => {
+    const c = arenaCard(S, k, {button:true, cls:XC.vote === k ? 'pick' : ''}); c.dataset.k = k;
+    if (k === XC.me) c.disabled = true;
+    c.onclick = () => { if (k === XC.me || !XC.s || XC.s.ph !== 'vote') return; arenaCastVote(k); grid.querySelectorAll('.acard').forEach(x => x.classList.toggle('pick', x.dataset.k === k)); SFX.click(); };
+    grid.appendChild(c);
+  });
+  SFX.reveal(2); arenaVoteUi(S);
+}
+function arenaCastVote(k){
+  const S = XC.s; XC.vote = k;
+  if (XG && (appMode === 'xhost' || appMode === 'xlocal')){ XG.votes[XC.me] = k; xPublish(true); }
+  else if (NET.named) NET.named.presence({xv:{m:S.mid, r:S.r, v:k}}).catch(() => {});
+}
+function arenaVoteUi(S){ const el = $('xrVst'); if (!el) return; const n = (S.vd || []).length, t = (S.pl || []).length; el.textContent = XC.vote ? `You voted for ${xName(S, XC.vote)}. ${n} of ${t} have voted.` : `${n} of ${t} have voted.`; }
+function arenaReveal2(S){
+  arenaChrome(false);
+  const W = arenaWords(S), cnt = {}, vt = S.vt || {}; for (const v of Object.values(vt)) cnt[v] = (cnt[v] | 0) + 1;
+  const me = W.ik === XC.me, rs = S.rs || {};
+  $('xrLbl').textContent = 'IMPOSTER · ' + arenaRoundTxt(S); $('xrTitle').textContent = S.ct ? 'IMPOSTER CAUGHT!' : 'THE IMPOSTER GOT AWAY!';
+  const body = $('xrBody'), last = S.r + 1 >= XINFO.imp.rounds;
+  body.innerHTML = `<div class="xbanner">${me ? (S.ct ? 'YOU WERE THE IMPOSTER AND GOT CAUGHT!' : 'YOU WERE THE IMPOSTER AND GOT AWAY!') : `${esc(UP(xName(S, W.ik)))} WAS THE IMPOSTER!`}</div>
+    <p class="sub" style="text-align:center;margin:0">${me ? 'You' : esc(xName(S, W.ik))} had <b style="color:var(--q)">${esc(W.iw)}</b>. Everyone else had <b style="color:var(--y)">${esc(W.w)}</b>.</p><div class="agrid"></div><p class="anext">${last ? 'Final results' : 'Next round'} in <b id="xrNext"></b></p>`;
+  const grid = body.querySelector('.agrid'), order = (S.pl || []).slice().sort((a, b) => (b === W.ik) - (a === W.ik) || (rs[b] | 0) - (rs[a] | 0));
+  order.forEach(k => grid.appendChild(arenaCard(S, k, {cls:k === W.ik ? 'imp' : '', tag:k === W.ik ? 'IMPOSTER' : '', sc:`+${rs[k] | 0} PTS`, sub:`${cnt[k] | 0} vote${(cnt[k] | 0) === 1 ? '' : 's'}${vt[k] ? ` · voted for ${vt[k] === XC.me ? 'you' : esc(xName(S, vt[k]))}` : ''}`})));
+  if (me ? !S.ct : vt[XC.me] === W.ik){ SFX.unlock(); confetti(60); } else SFX.land();
+}
+function arenaResults(S){
+  const I = XINFO[S.k], rk = Array.isArray(S.rk) ? S.rk : (S.pl || []), place = rk.indexOf(XC.me) + 1;
+  $('xrLbl').textContent = I.name + ' RESULTS'; $('xrTitle').textContent = 'FINAL STANDINGS';
+  const tag = k => S.k === 'roy' ? (rk[0] === k ? 'WINNER' : `OUT IN ROUND ${(S.or || {})[k] || '?'}`) : arenaPts(S, S.sc[k]) + (S.k === 'imp' ? '' : ' PTS');
+  const top = S.sc[rk[0]] | 0, tied = S.k !== 'roy' && rk.filter(k => (S.sc[k] | 0) === top).length > 1;
+  const banner = tied ? ((S.sc[XC.me] | 0) === top ? "IT'S A TIE FOR FIRST!" : `${rk.filter(k => (S.sc[k] | 0) === top).map(k => esc(UP(xName(S, k)))).join(' & ')} TIE FOR FIRST!`) : place === 1 ? (S.k === 'roy' ? 'LAST ARTIST STANDING: YOU!' : 'YOU WIN!') : `${esc(UP(xName(S, rk[0])))} WINS!`;
+  const arts = (XC.arts || []).slice().sort((a, b) => a.r - b.r);
+  $('xrBody').innerHTML = `<div class="xbanner">${banner}</div>${S.sim ? `<p class="sub" style="text-align:center;margin:0">The bots fought out the last ${S.sim} round${S.sim === 1 ? '' : 's'} on their own.</p>` : ''}
+    <ol class="ranks xranks">${rk.map((k, i) => `<li class="show${k === XC.me ? ' me' : ''}"><span class="pos">#${i + 1}</span><span class="nm">${esc(xName(S, k))}</span><span class="sc">${tag(k)}</span></li>`).join('')}</ol>
+    ${arts.length ? '<div class="lbl">Your drawings</div><div class="mystrip"></div>' : ''}`;
+  const strip = $('xrBody').querySelector('.mystrip');
+  arts.forEach(a => strip.appendChild(arenaCard(S, XC.me, {grid:a.g, nm:a.th, sc:a.s != null ? a.s.toFixed(1) : null})));
+  const best = arts.slice().sort((a, b) => (b.s || 0) - (a.s || 0))[0];
+  lastDuo = best ? {grid:best.g, pal:'pico', theme:best.th, score:best.s, place, mode:I.name.replace(/\b\w+/g, w => w[0] + w.slice(1).toLowerCase())} : null;
+  if (place === 1){ confetti(140); SFX.fanfare(); } else SFX.land();
+  xAward(25 + Math.max(0, rk.length - place) * 5 + (place === 1 ? 20 : 0), place === 1);
+}
+
 // ---------- shared screen logic ----------
 function xRender(S){
   if (!S) return;
   const now = performance.now();
-  if (S.mid !== XC.mid){ XC.mid = S.mid; XC.kind = S.k; XC.ph = ''; XC.ti = -1; XC.resShown = ''; XC.gseq = 0; XC.gl = []; }
+  if (S.mid !== XC.mid){ XC.mid = S.mid; XC.kind = S.k; XC.ph = ''; XC.ti = -1; XC.resShown = ''; XC.gseq = 0; XC.gl = []; XC.arts = []; XC.vote = ''; }
   XC.s = S;
   const end = now + (+S.rem || 0) * 1000; if (Math.abs(end - XC.endAt) > 1200 || S.ph !== XC.ph) XC.endAt = end;
-  const changed = S.ph !== XC.ph || (S.k === 'cha' && S.ti !== XC.ti);
+  const changed = S.ph !== XC.ph || (S.k === 'cha' && S.ti !== XC.ti) || (ARENA[S.k] && S.r !== XC.ti);
   if (S.k === 'duo'){
     if (S.ph === 'theme' && changed){ noteTheme(S.th); playReel(S.th, BOT_THEMES); }
     else if (S.ph === 'draw'){ if (changed) duoEnterDraw(S); duoStatus(S); }
     else if (S.ph === 'collect' && changed){ ED.enabled = false; musicStop(); SFX.end(); duoFinal(); showCollecting(); $('reelSub').textContent = 'Putting the team drawings together…'; }
     else if (S.ph === 'res' && Array.isArray(S.res) && XC.resShown !== S.mid){ XC.resShown = S.mid; xShowRes(S); }
-  } else {
+  } else if (ARENA[S.k]) arenaRender(S, changed);
+  else {
     if (S.ph === 'intro' && changed){
       ED.enabled = false; musicStop(); resTimers.forEach(clearTimeout); clearTimeout(reelTimer);
       showView('vTheme'); const r = $('reel'); r.classList.remove('land'); void r.offsetWidth; r.classList.add('land');
@@ -3938,12 +4491,12 @@ function xRender(S){
     }
     else if (S.ph === 'res' && XC.resShown !== S.mid){ XC.resShown = S.mid; xShowRes(S); }
   }
-  XC.ph = S.ph; XC.ti = S.ti;
+  XC.ph = S.ph; XC.ti = ARENA[S.k] ? S.r : S.ti;
 }
 function xShowRes(S){
   ED.enabled = false; musicStop(); showView('vXRes'); $('vXRes').scrollTop = 0;
-  lastDuo = null;
-  if (S.k === 'duo') duoResults(S); else chaResults(S);
+  lastDuo = null; $('xrXp').hidden = false; $('xrBtns').hidden = false;
+  if (S.k === 'duo') duoResults(S); else if (ARENA[S.k]) arenaResults(S); else chaResults(S);
   $('xrSave').hidden = !lastDuo;
   const local = appMode === 'xlocal', host = appMode === 'xhost' && !NET.mm;
   $('xrAgain').hidden = !(local || host); $('xrRoom').hidden = !host; $('xrFind').hidden = !NET.mm; $('xrWait').hidden = !(appMode === 'xclient' && !NET.mm);
@@ -3958,6 +4511,7 @@ function xLocalTick(now){
   const S = XC.s; if (!S) return;
   if (S.k === 'duo' && S.ph === 'draw') duoSyncTick(now);
   if (S.k === 'cha'){ chaWatchTick(now); chaDrawTick(now); }
+  if (ARENA[S.k]) arenaTick(now, S);
   if (!$('vDraw').hidden){
     const left = (XC.endAt - now) / 1000; $('dTimer').textContent = fmt(left); $('dTimer').classList.toggle('hot', left <= 10);
     const sec = Math.ceil(left); if (sec !== XC.lastSec){ XC.lastSec = sec; if (sec <= 10 && sec > 0) SFX.warn(); }
@@ -3970,7 +4524,7 @@ function xFromHost(S, peers){
   if (S.mid !== XC.mid){
     if (Array.isArray(S.pl) && !S.pl.includes(XC.me)){ if (NET.mm){ mmBounce(); return; } if (XC.busy !== S.mid){ XC.busy = S.mid; toast('A match is going on in this room. You can join the next one.'); } return; }
     appMode = 'xclient'; if (MM.on) stopQueue(true);
-    NET.named.presence({xo:null, xf:null, xr:0, xg:null, xc:null}).catch(() => {});
+    NET.named.presence({xo:null, xf:null, xr:0, xg:null, xc:null, xd:null, xv:null}).catch(() => {});
   }
   if (appMode !== 'xclient') appMode = 'xclient';
   xRender(S);
@@ -3984,13 +4538,11 @@ $('xrMenu').onclick = () => { if (NET.named) leaveRoom(); toMenu(); };
 $('xrRoom').onclick = () => {
   if (appMode !== 'xhost' || !NET.named) return;
   XG = null; XC.s = null; xDrawReset(); appMode = 'room';
-  NET.named.presence({ph:'room', x:null, xo:null, xf:null, xr:0, xg:null, xc:null}).catch(() => {});
+  NET.named.presence({ph:'room', x:null, xo:null, xf:null, xr:0, xg:null, xc:null, xd:null, xv:null}).catch(() => {});
   updateOpenPresence(); show('scrRoom'); renderRoom();
 };
 $('xrAgain').onclick = () => { auInit(); if (appMode === 'xlocal' || !NET.named) xLocal(XC.kind || lastX); else if (appMode === 'xhost') hostStart(); };
-$('xrFind').onclick = () => { auInit(); const k = XC.kind === 'duo' ? 'd' : 'c'; if (NET.named) leaveRoom(); XG = null; showView(null); startQueue(k); };
-document.querySelectorAll('[data-xb]').forEach(b => b.onclick = () => xLocal(b.dataset.xb));
-document.querySelectorAll('[data-xq]').forEach(b => b.onclick = () => { auInit(); startQueue({duo:'d', cha:'c', pic:'p'}[b.dataset.xq]); });
+$('xrFind').onclick = () => { auInit(); const k = MM_KIND[XC.kind] || 'c'; if (NET.named) leaveRoom(); XG = null; showView(null); startQueue(k); };
 
 // ---------- main tick ----------
 let lastTickSec = -1, lastFrame = performance.now();
@@ -4046,7 +4598,7 @@ new MutationObserver(ms => { for (const m of ms){ if (m.type === 'characterData'
   if (!numRaf) numRaf = requestAnimationFrame(() => { numRaf = 0; const q = [...numQ]; numQ.clear(); for (const el of q) if (el && el.isConnected && !(el.closest && el.closest('.num'))) numWrap(el); }); })
   .observe(document.body, {childList:true, subtree:true, characterData:true});
 numWrap(document.body);
-window.__pbx = {isRude, folioAdd, setMix(v){ RECOG_MIX = v; }, setTta(v){ QTTA = v; }, qualityOf, quality1, recognizeMlp, recognizeCnn, nextTheme, noteTheme, myRecent, JP, features, effortOf, themeMatch, get XG(){ return XG; }, XC, get appMode(){ return appMode; }, get MM(){ return MM; }, encAny, decAny};
+window.__pbx = {isRude, folioAdd, setMix(v){ RECOG_MIX = v; }, setTta(v){ QTTA = v; }, qualityOf, quality1, recognizeMlp, recognizeCnn, nextTheme, noteTheme, myRecent, JP, features, effortOf, themeMatch, get XG(){ return XG; }, XC, get appMode(){ return appMode; }, get MM(){ return MM; }, encAny, decAny, copyScore, copyBot, makeArtQ:makeArt, IMP_PAIRS, XINFO, dailyTheme, dayKey, recolor, pick3, ED, encGrid, blankCanvas, judgeA:judge, mulberry, BOT_THEMES:BOT_THEMES};
 window.__pb = {myName, get GS(){ return GS; }, get NET(){ return NET; }, prof, rankDelta, tierOf, get RES(){ return RES; }, makeArt, makeArtHi, artFor, judgeDown, detailBonus, judge, judgeRaw, JP, recognize, artFeatures, botVerdict, encGrid, decGrid, get mode(){ return appMode; }, ED, BOT_THEMES};
 window.__pbReady = 1; { const w = document.getElementById('jsWarn'); if (w) w.style.display = 'none'; }
 })();
