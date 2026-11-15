@@ -332,7 +332,8 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 .placard .meta{color:#6d5a44;font-size:12px}
 .placard .medal{color:#8b5a14;font-weight:700}
 .piece.empty .frame{cursor:default}
-.piece.empty .mat{display:grid;place-items:center;aspect-ratio:1;width:calc(var(--pw) - 60px);background:#e9e0c8;color:#7b6a52;font:italic 15px/1.4 Georgia,serif;text-align:center;padding:18px}
+.piece .frame{width:100%;box-sizing:border-box}
+.piece.empty .mat{display:grid;place-items:center;align-content:center;aspect-ratio:1;width:100%;box-sizing:border-box;background:#e9e0c8;color:#7b6a52;font:italic 15px/1.4 Georgia,serif;text-align:center;padding:18px}
 .hall-nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:0 16px;position:relative;z-index:2}
 .hall-arrow{width:44px;height:44px;border:2px solid #8a6424;background:rgba(0,0,0,.25);color:#ffe3a3;font-size:16px}
 .hall-arrow:disabled{opacity:.3}
