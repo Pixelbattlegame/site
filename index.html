@@ -290,6 +290,58 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 #qSub{text-align:center}
 @media (prefers-reduced-motion: reduce){.loader i,.qbar i{animation:none}}
 #toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(18px, calc(env(safe-area-inset-bottom, 0px) + 12px));z-index:30;background:var(--w);color:var(--k);padding:10px 14px;font:600 17px var(--body);max-width:calc(100% - 32px);text-align:center;box-shadow:4px 4px 0 rgba(0,0,0,.5)}
+/* ---------- hall of artworks: a little museum ---------- */
+.m-gold{--bg:linear-gradient(135deg,#ffe08a,#e2a93b 55%,#f7d26a);--fg:#3a2306;background:linear-gradient(135deg,#ffe08a,#e2a93b 55%,#f7d26a)!important}
+.hall{background:
+  radial-gradient(ellipse 80% 55% at 50% 38%, rgba(255,214,150,.10), transparent 70%),
+  repeating-linear-gradient(90deg, rgba(255,255,255,.018) 0 2px, transparent 2px 46px),
+  linear-gradient(#2a1a24, #3a2230 55%, #2c1b25);
+  display:flex;flex-direction:column;align-items:stretch;overflow-x:hidden;padding-left:0;padding-right:0}
+.hall-ceiling{position:absolute;left:0;right:0;top:0;height:10px;background:linear-gradient(#120b10,#2a1a24)}
+.hall-head{display:grid;gap:6px;justify-items:center;text-align:center;padding:4px 16px 0;position:relative;z-index:2}
+.hall-head .back{justify-self:start;color:#e7c98b}
+.hall-title{font-size:clamp(15px,4.6vw,24px);letter-spacing:.06em;color:#ffe3a3;
+  background:linear-gradient(90deg,#c8902f,#fff1c2 30%,#e0a93a 50%,#fff1c2 70%,#c8902f);background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:hallShine 6s linear infinite;
+  padding:10px 18px;border-top:2px solid #8a6424;border-bottom:2px solid #8a6424}
+@keyframes hallShine{to{background-position:-200% 0}}
+.hall-sub{margin:0;color:#c9ab7a;font:italic 400 15px/1.3 Georgia,"Times New Roman",serif}
+.wall{position:relative;display:flex;align-items:flex-start;gap:clamp(18px,6vw,56px);overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;padding:104px calc(50% - var(--pw)/2) 26px;--pw:min(64vw,330px,40vh);flex:1 0 auto;outline:none;perspective:900px}
+.wall::-webkit-scrollbar{display:none}
+.piece{position:relative;flex:0 0 var(--pw);scroll-snap-align:center;margin:0;display:grid;justify-items:center;gap:18px;
+  transform:scale(calc(1 - .2 * var(--d,0))) rotateY(calc(var(--side,0) * 22deg * var(--d,0)));
+  filter:brightness(calc(1 - .5 * var(--d,0))) saturate(calc(1 - .35 * var(--d,0)));transition:transform .12s linear,filter .12s linear;
+  animation:hallIn .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 70ms)}
+@keyframes hallIn{from{opacity:0;translate:0 24px}to{opacity:1;translate:0 0}}
+/* the spotlight above each artwork, brightest on the one you're looking at */
+.piece::before{content:"";position:absolute;left:50%;top:-88px;width:170%;height:calc(100% + 88px);translate:-50% 0;pointer-events:none;z-index:-1;
+  background:conic-gradient(from 150deg at 50% 0%, transparent 0deg, rgba(255,232,180,.16) 22deg, rgba(255,236,190,.22) 30deg, rgba(255,232,180,.16) 38deg, transparent 60deg),radial-gradient(ellipse 18% 46% at 50% 0%, rgba(255,236,190,.26), transparent 75%);-webkit-mask:linear-gradient(#000 55%,transparent);mask:linear-gradient(#000 55%,transparent);opacity:calc(1 - var(--d,0));transition:opacity .2s}
+.piece::after{content:"";position:absolute;top:-92px;left:50%;width:46px;height:10px;translate:-50% 0;border-radius:0 0 8px 8px;
+  background:linear-gradient(#1a1014,#4a3640);box-shadow:0 6px 14px rgba(255,230,170,calc(.5 * (1 - var(--d,0))))}
+.frame{position:relative;padding:clamp(12px,3.2vw,18px);border-radius:3px;cursor:pointer;
+  background:linear-gradient(135deg,#7a4d12 0%,#f6d97d 18%,#b07a22 34%,#ffe9a8 50%,#a8701b 66%,#f1cb63 82%,#6e440e 100%);
+  box-shadow:0 0 0 2px #3d2606,0 26px 40px rgba(0,0,0,.6),0 6px 10px rgba(0,0,0,.45),inset 0 0 0 2px #fff0bd,inset 0 0 0 5px #8b5a14,inset 0 0 12px rgba(0,0,0,.45)}
+.frame::before{content:"";position:absolute;inset:clamp(5px,1.4vw,8px);border:2px solid rgba(255,240,190,.55);border-radius:2px;pointer-events:none}
+.mat{background:#f2ead6;padding:clamp(10px,3vw,18px);box-shadow:inset 0 0 0 1px #d8cba8,inset 2px 3px 8px rgba(0,0,0,.28)}
+.mat canvas{display:block;width:100%;aspect-ratio:1;image-rendering:pixelated;image-rendering:crisp-edges;box-shadow:0 0 0 1px rgba(0,0,0,.25)}
+.placard{width:min(86%,250px);background:linear-gradient(#fbf6e8,#efe4c8);color:#2b2118;padding:10px 12px 11px;border-radius:2px;
+  box-shadow:0 4px 10px rgba(0,0,0,.45),inset 0 0 0 1px #d6c49a;font:400 13px/1.35 Georgia,"Times New Roman",serif;display:grid;gap:2px;text-align:left}
+.placard b{font:400 10px/1.4 var(--display);letter-spacing:.04em;color:#1b130c}
+.placard i{color:#5b4632}
+.placard .meta{color:#6d5a44;font-size:12px}
+.placard .medal{color:#8b5a14;font-weight:700}
+.piece.empty .frame{cursor:default}
+.piece.empty .mat{display:grid;place-items:center;aspect-ratio:1;width:calc(var(--pw) - 60px);background:#e9e0c8;color:#7b6a52;font:italic 15px/1.4 Georgia,serif;text-align:center;padding:18px}
+.hall-nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:0 16px;position:relative;z-index:2}
+.hall-arrow{width:44px;height:44px;border:2px solid #8a6424;background:rgba(0,0,0,.25);color:#ffe3a3;font-size:16px}
+.hall-arrow:disabled{opacity:.3}
+.hall-pos{font:400 11px var(--display);color:#e7c98b;min-width:84px;text-align:center}
+.hall-actions{display:flex;justify-content:center;gap:12px;padding:14px 16px 0;position:relative;z-index:2}
+.hall-floor{flex:1 0 70px;min-height:70px;margin-top:18px;background:
+  linear-gradient(rgba(0,0,0,.55),transparent 30%),
+  repeating-linear-gradient(90deg,#4b2c1c 0 88px,#3f2416 88px 90px,#56331f 90px 178px,#3f2416 178px 180px);border-top:3px solid #1c0f0a}
+@media (prefers-reduced-motion:reduce){.piece{animation:none;transition:none}.hall-title{animation:none}}
 @media (max-width:540px){ .tips{grid-template-columns:1fr 1fr} .mode.big b{font-size:15px} .mode b{font-size:12px} .code{font-size:30px} .podium{gap:6px} .pod .place{font-size:13px} }
 @media (prefers-reduced-motion: reduce){ .reel.land{animation:none} .timer.hot{animation:none} }
 .joinmsg{margin-top:8px;font-size:13px;line-height:1.4;color:var(--muted,#94b0c2)}.joinmsg.bad{color:#ff7a7a}
@@ -330,7 +382,8 @@ body{margin:0}
       <button class="mode m-pur" id="bRanked"><b>RANKED</b><span id="rankSub">Real players. Place high to climb the ranks.</span></button>
       <button class="mode m-blue" id="bPrac"><b>PRACTICE</b><span>Solo. The bot judge scores you out of 10.</span></button>
       <button class="mode m-grn" id="bOnline"><b>PRIVATE ROOM</b><span id="onlineSub">Play friends with a code</span></button>
-      <button class="mode big m-teal" id="bModes"><b>OTHER GAMEMODES</b><span>2V2, Charades and Picasso mode.</span></button>
+      <button class="mode m-teal" id="bModes"><b>OTHER GAMEMODES</b><span>2V2, Charades and Picasso mode.</span></button>
+      <button class="mode m-gold" id="bHall"><b>HALL OF ARTWORKS</b><span id="hallCount">Every drawing you save.</span></button>
     </div>
     <div class="tips">
       <div><b>1 THEME</b>A random theme spins up.</div>
@@ -364,6 +417,25 @@ body{margin:0}
     </div>
     <div class="note">Playing with friends? Start a Private Room and pick the mode there.</div>
   </div>
+</section>
+<section class="screen hall" id="scrHall" hidden>
+  <div class="hall-ceiling" aria-hidden="true"></div>
+  <div class="hall-head">
+    <button class="back" data-back>← BACK</button>
+    <h2 class="hall-title">HALL OF ARTWORKS</h2>
+    <p class="hall-sub" id="hallSub">Your saved drawings, kept on this device.</p>
+  </div>
+  <div class="wall" id="hallWall" tabindex="0" aria-label="Your saved drawings. Swipe or use the arrow keys to walk through the hall."></div>
+  <div class="hall-nav" id="hallNav">
+    <button class="hall-arrow" id="hallPrev" aria-label="Previous artwork">◀</button>
+    <span class="hall-pos" id="hallPos">1 / 1</span>
+    <button class="hall-arrow" id="hallNext" aria-label="Next artwork">▶</button>
+  </div>
+  <div class="hall-actions" id="hallActions">
+    <button class="btn" id="hallDl">DOWNLOAD</button>
+    <button class="btn ghost" id="hallDel">REMOVE</button>
+  </div>
+  <div class="hall-floor" aria-hidden="true"></div>
 </section>
 <section class="screen dim" id="scrRanks" hidden>
   <div class="panel">
@@ -2268,7 +2340,7 @@ function edStart(palId, n){
 
 // ---------- views ----------
 const VIEWS = ['vTheme', 'vHand', 'vDraw', 'vVote', 'vRes', 'vJudge', 'vXRes'];
-const SCREENS = ['scrMenu', 'scrModes', 'scrRanks', 'scrPrac', 'scrQueue', 'scrOnline', 'scrRoom'];
+const SCREENS = ['scrMenu', 'scrModes', 'scrHall', 'scrRanks', 'scrPrac', 'scrQueue', 'scrOnline', 'scrRoom'];
 function showView(id){ for (const v of VIEWS) $(v).hidden = v !== id; if (id) for (const s of SCREENS) $(s).hidden = true; }
 function show(id){ for (const s of SCREENS) $(s).hidden = s !== id; if (id) for (const v of VIEWS) $(v).hidden = true; }
 function toast(msg){ const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => t.hidden = true, 2600); }
@@ -2514,7 +2586,7 @@ function afterResults(list, mine, hotKeys){
   $('rMenu').textContent = appMode === 'host' && !mm ? 'ROOM' : 'MENU';
   $('rFind').hidden = !mm; $('rFind').textContent = RES.ranked ? 'NEW RANKED MATCH' : 'NEW MATCH';
   showRankBox(RES.rank);
-  $('rSave').hidden = !(mine && (DL || OFFLINE)); $('rCritic').hidden = !(mine && SAMPLE);
+  $('rSave').hidden = !mine; $('rCritic').hidden = !(mine && SAMPLE);
   lastMine = mine || null; lastThemeRes = $('rTitle').textContent.replace('THEME: ', '');
   // XP (device owner)
   const ref = mine || (hotKeys ? list.find(r => r.key === hotKeys[0]) : null);
@@ -2536,10 +2608,9 @@ function afterResults(list, mine, hotKeys){
   unl.forEach((p, i) => { const d = document.createElement('div'); d.className = 'unlock'; d.innerHTML = `<div class="sw">${PALS[p].c.map(c => `<i style="background:${c}"></i>`).join('')}</div><div><small>NEW PALETTE UNLOCKED</small><b>${PALS[p].n}</b><span>Pick it in the menu or while drawing.</span></div>`; $('unlockBox').appendChild(d); setTimeout(() => SFX.unlock(), 1300 + i * 300); });
 }
 let lastMine = null, lastThemeRes = '';
-$('rSave').onclick = async () => {
-  if (!lastMine || !(DL || OFFLINE)) return;
-  try { const blob = await gridToBlob(lastMine.grid, lastMine.pal, 512); await saveBlob(blob, `pixel-battle-${lastThemeRes.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png`); toast('Saved!'); }
-  catch(e){ if (e && e.code === 'declined') return; toast('Saving is not available here.'); }
+$('rSave').onclick = () => {
+  if (!lastMine) return;
+  saveArt({grid:lastMine.grid, pal:lastMine.pal, theme:lastThemeRes, score:lastMine.avg, place:lastMine.place, mode:RES.kind === 'p' ? 'Picasso' : RES.ranked ? 'Ranked' : RES.mm ? 'Online match' : NET.named ? 'Private room' : 'Quick Play'});
 };
 $('rCritic').onclick = async () => {
   if (!lastMine || !SAMPLE) return;
@@ -2660,7 +2731,7 @@ $('jRate').onclick = async () => {
   if (!score){ score = judge(pracArt.grid, mulberry(Date.now() & 0xffff), pracArt.theme); const bv = botVerdict(pracArt.grid, pracArt.theme, score); title = bv.title; comment = bv.comment; acc = bv.acc; }
   if (acc === null) acc = accuracyOf(pracArt.grid, pracArt.theme);
   $('jHead').textContent = ai ? `AI JUDGE: “${title}”` : `“${title}”`;
-  $('jScore').textContent = `${score} / 10`; $('jText').textContent = `Accuracy: ${acc}%\n${comment}`;
+  $('jScore').textContent = `${score} / 10`; $('jText').textContent = `Accuracy: ${acc}%\n${comment}`; if (pracArt){ pracArt.score = score; pracArt.mode = 'Practice'; }
   if (score >= 8){ confetti(120); SFX.fanfare(); } else SFX.land();
   const isBest = score > (prof.best || 0); if (isBest){ prof.best = score; prof.bestTheme = pracArt.theme; }
   // XP
@@ -2670,11 +2741,94 @@ $('jRate').onclick = async () => {
   saveProf();
   $('jXp').hidden = false; $('jLvl').textContent = after.l; $('jGain').textContent = `+${gain} XP${isBest ? ' · NEW BEST!' : ''}`; $('jXpBar').style.width = (after.cur / after.need * 100) + '%';
   $('jUnlock').innerHTML = ''; unl.forEach(p => { const d = document.createElement('div'); d.className = 'unlock'; d.innerHTML = `<div class="sw">${PALS[p].c.map(c => `<i style="background:${c}"></i>`).join('')}</div><div><small>NEW PALETTE UNLOCKED</small><b>${PALS[p].n}</b><span>Pick it in the menu or while drawing.</span></div>`; $('jUnlock').appendChild(d); setTimeout(() => SFX.unlock(), 600); });
-  $('jRate').hidden = true; $('jAgain').hidden = false; $('jSave').hidden = !(DL || OFFLINE);
+  $('jRate').hidden = true; $('jAgain').hidden = false; $('jSave').hidden = false;
 };
 $('jAgain').onclick = () => { auInit(); startPractice(); };
 $('jMenu').onclick = () => toMenu();
-$('jSave').onclick = async () => { if (!pracArt || !(DL || OFFLINE)) return; try { const blob = await gridToBlob(pracArt.grid, pracArt.pal, 512); await saveBlob(blob, `pixel-battle-${pracArt.theme.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png`); toast('Saved!'); } catch(e){ if (e && e.code === 'declined') return; toast('Saving is not available here.'); } };
+$('jSave').onclick = () => { if (pracArt) saveArt(pracArt); };
+// ---------- hall of artworks: every drawing you save, kept on this device ----------
+const FOLIO_MAX = 120;
+const folio = () => { const f = store.get('folio', []); return Array.isArray(f) ? f : []; };
+function folioSave(list){
+  // if the device runs out of room, the oldest artworks make space for the new one
+  for (let n = list.length; n > 0; n = Math.min(n - 1, Math.floor(n * .9))){
+    try { localStorage.setItem('pixelbattle.folio', JSON.stringify(list.slice(0, n))); return n; } catch(e){}
+  }
+  return 0;
+}
+// adds the artwork (newest first); returns false if this exact drawing is already in the hall
+function folioAdd(a){
+  const e = a.grid.length === 4096 ? encAny(a.grid) : encGrid(a.grid), list = folio();
+  if (list.some(x => x.e === e && x.t === a.theme)) return false;
+  list.unshift({id:Date.now().toString(36) + Math.random().toString(36).slice(2, 6), t:a.theme, e, n:a.grid.length === 4096 ? 64 : 32, p:a.pal || 'pico',
+    s:a.score == null ? null : Math.round(a.score * 10) / 10, pl:a.place || 0, m:a.mode || '', a:myName(), d:Date.now()});
+  folioSave(list.slice(0, FOLIO_MAX)); renderHallCount(); return true;
+}
+const folioGrid = x => x.n === 64 ? decAny(x.e, 4096) : decGrid(x.e);
+const artFile = t => `pixel-battle-${String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png`;
+// save my art: into the hall, and a picture file onto the device
+async function saveArt(a){
+  const added = folioAdd(a);
+  let saved = false;
+  try { await downloadBlob(await gridToBlob(a.grid, a.pal, 512), artFile(a.theme)); saved = true; } catch(e){ if (e && e.code === 'declined'){ toast(added ? 'Added to your Hall of Artworks.' : 'Already in your Hall of Artworks.'); return; } }
+  toast(added ? (saved ? 'Saved! Added to your Hall of Artworks and downloaded.' : 'Added to your Hall of Artworks!') : (saved ? 'Downloaded again. It was already in your Hall of Artworks.' : 'Already in your Hall of Artworks.'));
+}
+async function downloadBlob(blob, filename){ return saveBlob(blob, filename); }
+function renderHallCount(){ const n = folio().length; $('hallCount').textContent = n ? `${n} drawing${n === 1 ? '' : 's'} on display.` : 'Every drawing you save.'; }
+const PLACE = n => n === 1 ? '1st place' : n === 2 ? '2nd place' : n === 3 ? '3rd place' : n ? n + 'th place' : '';
+let hallIdx = 0, hallDelArm = 0;
+function openHall(){ show('scrHall'); renderHall(); requestAnimationFrame(() => { $('hallWall').scrollLeft = 0; hallLight(); $('hallWall').focus({preventScroll:true}); }); }
+function renderHall(){
+  const list = folio(), wall = $('hallWall'); wall.innerHTML = ''; hallIdx = 0; hallDelArm = 0; $('hallDel').textContent = 'REMOVE';
+  $('hallSub').textContent = list.length ? `${list.length} artwork${list.length === 1 ? '' : 's'} on display · kept on this device` : 'Your saved drawings, kept on this device.';
+  $('hallNav').hidden = $('hallActions').hidden = !list.length;
+  if (!list.length){
+    wall.innerHTML = `<figure class="piece empty" style="--i:0"><div class="frame"><div class="mat">Your first masterpiece will hang here.<br><br>Tap SAVE MY ART after a match or a practice round.</div></div>
+      <figcaption class="placard"><b>COMING SOON</b><i>by you</i><span class="meta">Pixel art, any size</span></figcaption></figure>`;
+    return;
+  }
+  list.forEach((x, i) => {
+    const f = document.createElement('figure'); f.className = 'piece'; f.style.setProperty('--i', Math.min(i, 6)); f.dataset.i = i;
+    const fr = document.createElement('div'); fr.className = 'frame'; const mat = document.createElement('div'); mat.className = 'mat';
+    const c = document.createElement('canvas'); c.width = c.height = 256; c.setAttribute('role', 'img'); c.setAttribute('aria-label', `${x.t}, pixel art`);
+    try { drawGrid(c, folioGrid(x), x.p); } catch(e){}
+    mat.appendChild(c); fr.appendChild(mat); f.appendChild(fr);
+    const when = new Date(x.d || Date.now()), mode = x.m ? ` · ${x.m}` : '';
+    const score = x.s != null ? `Scored ${x.s} / 10` : '', place = PLACE(x.pl);
+    const cap = document.createElement('figcaption'); cap.className = 'placard';
+    cap.innerHTML = `<b>${esc(x.t)}</b><i>${esc(cleanName(x.a) || 'Unknown artist')}, ${when.getFullYear()}</i><span class="meta">Pixel art on ${x.n}×${x.n} canvas${esc(mode)}</span>` +
+      (score || place ? `<span class="medal">${[score, place].filter(Boolean).join(' · ')}</span>` : '') + `<span class="meta">${when.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'})}</span>`;
+    f.appendChild(cap);
+    fr.onclick = () => hallGo(i);
+    wall.appendChild(f);
+  });
+  hallLight();
+}
+// walking through the hall: the artwork in the middle is lit, the ones beside it turn away into the dark
+function hallLight(){
+  const wall = $('hallWall'), mid = wall.scrollLeft + wall.clientWidth / 2, ps = wall.querySelectorAll('.piece'); let best = 0, bd = 1e9;
+  ps.forEach((p, i) => { const c = p.offsetLeft + p.offsetWidth / 2, dist = c - mid, d = Math.min(1, Math.abs(dist) / (p.offsetWidth * 1.15)); p.style.setProperty('--d', d.toFixed(3)); p.style.setProperty('--side', dist < 0 ? 1 : -1); if (Math.abs(dist) < bd){ bd = Math.abs(dist); best = i; } });
+  if (best !== hallIdx){ hallIdx = best; hallDelArm = 0; $('hallDel').textContent = 'REMOVE'; }
+  const n = folio().length; $('hallPos').textContent = n ? `${hallIdx + 1} / ${n}` : ''; $('hallPrev').disabled = hallIdx <= 0; $('hallNext').disabled = hallIdx >= n - 1;
+}
+function hallGo(i){ const ps = $('hallWall').querySelectorAll('.piece'), p = ps[clamp(i, 0, ps.length - 1)]; if (!p) return; const wall = $('hallWall'); wall.scrollTo({left:p.offsetLeft + p.offsetWidth / 2 - wall.clientWidth / 2, behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); }
+{ let raf = 0; $('hallWall').addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; hallLight(); }); }, {passive:true}); }
+// a mouse wheel walks sideways through the hall too
+$('hallWall').addEventListener('wheel', e => { if (Math.abs(e.deltaY) > Math.abs(e.deltaX)){ e.preventDefault(); $('hallWall').scrollLeft += e.deltaY; } }, {passive:false});
+$('hallWall').addEventListener('keydown', e => { if (e.key === 'ArrowRight'){ e.preventDefault(); hallGo(hallIdx + 1); } else if (e.key === 'ArrowLeft'){ e.preventDefault(); hallGo(hallIdx - 1); } });
+window.addEventListener('resize', () => { if (!$('scrHall').hidden) hallLight(); });
+$('hallPrev').onclick = () => hallGo(hallIdx - 1);
+$('hallNext').onclick = () => hallGo(hallIdx + 1);
+$('hallDl').onclick = async () => { const x = folio()[hallIdx]; if (!x) return; try { await downloadBlob(await gridToBlob(folioGrid(x), x.p, 512), artFile(x.t)); toast('Downloaded!'); } catch(e){ if (e && e.code === 'declined') return; toast('Downloading is not available here.'); } };
+$('hallDel').onclick = () => {
+  const list = folio(), x = list[hallIdx]; if (!x) return;
+  if (!hallDelArm){ hallDelArm = 1; $('hallDel').textContent = 'TAP AGAIN TO REMOVE'; return; }
+  const keep = hallIdx; list.splice(hallIdx, 1); folioSave(list); renderHallCount(); renderHall(); toast(`${x.t} was taken down.`);
+  requestAnimationFrame(() => { const ps = $('hallWall').querySelectorAll('.piece'), p = ps[Math.min(keep, ps.length - 1)]; if (p) $('hallWall').scrollLeft = p.offsetLeft + p.offsetWidth / 2 - $('hallWall').clientWidth / 2; hallLight(); });
+};
+$('bHall').onclick = () => { auInit(); openHall(); };
+renderHallCount();
+
 
 // ---------- menu ----------
 function refreshMenu(){
@@ -3885,7 +4039,7 @@ new MutationObserver(ms => { for (const m of ms){ if (m.type === 'characterData'
   if (!numRaf) numRaf = requestAnimationFrame(() => { numRaf = 0; const q = [...numQ]; numQ.clear(); for (const el of q) if (el && el.isConnected && !(el.closest && el.closest('.num'))) numWrap(el); }); })
   .observe(document.body, {childList:true, subtree:true, characterData:true});
 numWrap(document.body);
-window.__pbx = {isRude, setMix(v){ RECOG_MIX = v; }, setTta(v){ QTTA = v; }, qualityOf, quality1, recognizeMlp, recognizeCnn, nextTheme, noteTheme, myRecent, JP, features, effortOf, themeMatch, get XG(){ return XG; }, XC, get appMode(){ return appMode; }, get MM(){ return MM; }, encAny, decAny};
+window.__pbx = {isRude, folioAdd, setMix(v){ RECOG_MIX = v; }, setTta(v){ QTTA = v; }, qualityOf, quality1, recognizeMlp, recognizeCnn, nextTheme, noteTheme, myRecent, JP, features, effortOf, themeMatch, get XG(){ return XG; }, XC, get appMode(){ return appMode; }, get MM(){ return MM; }, encAny, decAny};
 window.__pb = {myName, get GS(){ return GS; }, get NET(){ return NET; }, prof, rankDelta, tierOf, get RES(){ return RES; }, makeArt, makeArtHi, artFor, judgeDown, detailBonus, judge, judgeRaw, JP, recognize, artFeatures, botVerdict, encGrid, decGrid, get mode(){ return appMode; }, ED, BOT_THEMES};
 window.__pbReady = 1; { const w = document.getElementById('jsWarn'); if (w) w.style.display = 'none'; }
 })();
