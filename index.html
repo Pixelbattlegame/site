@@ -3397,7 +3397,38 @@ $('joinBtn').onclick = () => joinRoom($('codeIn').value);
 $('codeIn').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); joinRoom($('codeIn').value); } });
 $('codeIn').addEventListener('input', () => { if (!NET.joining) joinMsg(''); });
 $('leaveRoom').onclick = () => { leaveRoom(); appMode = 'menu'; show('scrOnline'); };
-$('copyCode').onclick = () => { const s = `Art battle! Go to pixelbattlegame.com, tap Private Room and enter code ${NET.code}.`; try { navigator.clipboard.writeText(s).then(() => toast('Invite copied. Send it to your friends.'), () => toast(`Your code is ${NET.code}`)); } catch(e){ toast(`Your code is ${NET.code}`); } };
+// invite links: the website, the file and the itch.io copy all invite friends to pixelbattlegame.com/#join=CODE,
+// which opens straight into the room. (Inside Claude there's no link, so friends get the code.)
+const INVITE_URL = 'https://pixelbattlegame.com/';
+const inviteLink = () => INVITE_URL ? INVITE_URL + '#join=' + NET.code : '';
+if (INVITE_URL) $('copyCode').textContent = 'SHARE INVITE LINK';
+$('copyCode').onclick = () => {
+  const link = inviteLink(), s = link ? `Join my Pixel Battle room! ${link}` : `Art battle! Open Pixel Battle and join room ${NET.code}.`;
+  const copy = () => { try { navigator.clipboard.writeText(s).then(() => toast(link ? 'Invite link copied. Send it to your friends!' : 'Invite copied. Send it to your friends.'), () => toast(`Your code is ${NET.code}`)); } catch(e){ toast(`Your code is ${NET.code}`); } };
+  // on phones the share sheet opens (Messages, Snapchat, Discord...)
+  try { if (link && navigator.share && matchMedia('(pointer:coarse)').matches){ navigator.share({title:'Pixel Battle', text:`Join my Pixel Battle room ${NET.code}!`, url:link}).catch(e => { if (!e || e.name !== 'AbortError') copy(); }); return; } } catch(e){}
+  copy();
+};
+// arriving from an invite link: pick a name, then straight into the room
+const INVITE_CODE = (() => { const m = /^#join=([A-Za-z]{4})$/.exec(location.hash || ''); if (!m) return ''; try { history.replaceState(null, '', location.pathname + location.search); } catch(e){} return m[1].toUpperCase(); })();
+function openInvite(code){
+  const box = openSheet(`<div class="shead" style="grid-template-columns:minmax(0,1fr) auto"><div><h2 id="sheetTitle">JOIN ROOM ${code}</h2><small>A friend invited you to a Pixel Battle!</small></div><button class="ib" data-close aria-label="Close">✕</button></div>
+    <div style="display:grid;gap:4px"><label class="lbl" for="invName">Your name</label><input type="text" id="invName" maxlength="12" placeholder="Type a name" autocomplete="off" spellcheck="false"><div class="namemsg" id="invMsg" hidden>That name isn't allowed. Pick another one.</div></div>
+    <div class="row end"><button class="btn ghost" data-close>NOT NOW</button><button class="btn" id="invGo">JOIN ROOM</button></div>`, 'var(--l)');
+  $('invName').value = prof.name || '';
+  setTimeout(() => { try { if (!prof.name) $('invName').focus(); } catch(e){} }, 60);
+  const go = async () => {
+    const raw = $('invName').value.trim();
+    if (raw && isRude(raw)){ $('invMsg').hidden = false; return; }
+    $('nameIn').value = raw; $('nameIn').dispatchEvent(new Event('input'));
+    closeSheet(); $('bOnline').click(); $('codeIn').value = code;
+    // the game servers may still be connecting when the page has just opened
+    if (!NET.ok){ joinMsg('Connecting to the game servers…'); for (let i = 0; i < 48 && !NET.ok; i++) await new Promise(r => setTimeout(r, 250)); }
+    joinRoom(code);
+  };
+  $('invGo').onclick = go; $('invName').onkeydown = e => { if (e.key === 'Enter') go(); };
+}
+if (INVITE_CODE) setTimeout(() => openInvite(INVITE_CODE), 300);
 $('roomGo').onclick = () => hostStart();
 function hostStart(){
   if (!NET.named || !NET.host) return;
