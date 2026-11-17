@@ -4203,16 +4203,40 @@ function pick3(){
 // a bot picture painted with only the allowed colours: each colour becomes the closest allowed one
 function recolor(g, allowed){ const map = new Uint8Array(32); for (let c = 0; c < 32; c++){ let best = allowed[0], bd = 1e9; for (const a of allowed){ const d = colDist(c, a); if (d < bd){ bd = d; best = a; } } map[c] = best; } return g.map(v => map[v]); }
 function bgOf(g){ const n = Math.round(Math.sqrt(g.length)), c = new Array(32).fill(0); for (let i = 0; i < n; i++) for (const j of [i, (n - 1) * n + i, i * n, i * n + n - 1]) c[g[j]]++; return c.indexOf(Math.max(...c)); }
-// a bot redrawing the Copycat picture from memory: a little off-centre, with some parts forgotten or simplified
+// a bot redrawing the Copycat picture from memory, the way a person would: it remembers the picture blurry (small details
+// and thin lines are gone), gets the size and position a bit wrong, its lines wobble, small parts get forgotten and some
+// colours get mixed up. Worse bots remember less and wobble more.
 function copyBot(t, seed, skill){
-  const R = mulberry(seed), bg = bgOf(t), o = new Uint8Array(CELLS), sh = 2 - skill;
-  const dx = Math.round((R() * 2 - 1) * sh), dy = Math.round((R() * 2 - 1) * sh), lose = [.78, .64, .5][skill], forget = new Uint8Array(64);
-  for (let b = 0; b < 64; b++) forget[b] = R() < lose ? (R() < .5 ? 1 : 2) : 0;   // 4x4 blocks: 1 = left out, 2 = drawn in one colour
+  const R = mulberry(seed), bg = bgOf(t), o = new Uint8Array(CELLS), sk = clamp(skill | 0, 0, 2);
+  // 1. memory is blurry: the picture in blocks of 2-4 pixels, each block the colour that covers most of it
+  const b = [4, 3, 2][sk], M = Math.ceil(N / b), C = new Uint8Array(M * M);
+  for (let cy = 0; cy < M; cy++) for (let cx = 0; cx < M; cx++){
+    const cnt = new Map(); let best = bg, bn = 0;
+    for (let y = cy * b; y < Math.min(N, cy * b + b); y++) for (let x = cx * b; x < Math.min(N, cx * b + b); x++){ const v = t[y * N + x], n = (cnt.get(v) || 0) + (v === bg ? 1 : 1.15); cnt.set(v, n); if (n > bn){ bn = n; best = v; } }
+    C[cy * M + cx] = best;
+  }
+  // 2. small parts (a star, a button, an eye) are often forgotten
+  const seen = new Uint8Array(M * M), drop = [.65, .45, .25][sk];
+  for (let k = 0; k < M * M; k++){
+    if (seen[k] || C[k] === bg) continue;
+    const col = C[k], part = [k]; seen[k] = 1;
+    for (let q = 0; q < part.length; q++){ const c = part[q], x = c % M, y = (c / M) | 0;
+      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]){ if (nx < 0 || ny < 0 || nx >= M || ny >= M) continue; const n = ny * M + nx; if (!seen[n] && C[n] === col){ seen[n] = 1; part.push(n); } } }
+    if (part.length <= (sk === 2 ? 1 : 2) && R() < drop) for (const c of part) C[c] = bg;
+  }
+  // 3. some colours get mixed up with a similar one
+  const swap = new Map(), mix = [.4, .25, .12][sk];
+  for (const v of new Set(C)){ if (v === bg || R() >= mix) continue; let best = v, bd = 1e9; for (let c = 0; c < 16; c++){ if (c === v || c === bg) continue; const d = colDist(c, v) * (.8 + R() * .4); if (d < bd){ bd = d; best = c; } } swap.set(v, best); }
+  // 4. a bit too big or small, a bit off-centre, and wobbly lines (a smooth random bend over the whole picture)
+  const sc = 1 + (R() * 2 - 1) * [.16, .11, .07][sk], ox = (R() * 2 - 1) * [3, 2.2, 1.5][sk], oy = (R() * 2 - 1) * [3, 2.2, 1.5][sk], A = [2.4, 1.7, 1.1][sk];
+  const G = 5, nx = [], ny = []; for (let k = 0; k < G * G; k++){ nx.push((R() * 2 - 1) * A); ny.push((R() * 2 - 1) * A); }
+  const bend = (arr, x, y) => { const gx = x / (N - 1) * (G - 1), gy = y / (N - 1) * (G - 1), x0 = Math.min(G - 2, Math.floor(gx)), y0 = Math.min(G - 2, Math.floor(gy)), fx = gx - x0, fy = gy - y0;
+    return arr[y0 * G + x0] * (1 - fx) * (1 - fy) + arr[y0 * G + x0 + 1] * fx * (1 - fy) + arr[(y0 + 1) * G + x0] * (1 - fx) * fy + arr[(y0 + 1) * G + x0 + 1] * fx * fy; };
   for (let y = 0; y < N; y++) for (let x = 0; x < N; x++){
-    const sx = x - dx, sy = y - dy; let v = sx >= 0 && sy >= 0 && sx < N && sy < N ? t[sy * N + sx] : bg;
-    const f = forget[(y >> 2) * 8 + (x >> 2)];
-    if (v !== bg && f === 1) v = bg; else if (v !== bg && f === 2) v = t[((y >> 2) * 4 + 1) * N + (x >> 2) * 4 + 1] === bg ? v : t[((y >> 2) * 4 + 1) * N + (x >> 2) * 4 + 1];
-    o[y * N + x] = v;
+    const u = (x - N / 2 - ox) / sc + N / 2 + bend(nx, x, y), v = (y - N / 2 - oy) / sc + N / 2 + bend(ny, x, y);
+    const cx = Math.floor(u / b), cy = Math.floor(v / b);
+    let c = cx >= 0 && cy >= 0 && cx < M && cy < M ? C[cy * M + cx] : bg;
+    o[y * N + x] = swap.has(c) ? swap.get(c) : c;
   }
   return o;
 }
