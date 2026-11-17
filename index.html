@@ -410,7 +410,7 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 .placard .medal{color:#8b5a14;font-weight:700}
 .piece.empty .frame{cursor:default}
 .piece .frame{width:100%;box-sizing:border-box}
-.piece.empty .mat{display:grid;place-items:center;align-content:center;aspect-ratio:1;width:100%;box-sizing:border-box;background:#e9e0c8;color:#7b6a52;font:400 16px/1.4 var(--body);text-align:center;padding:18px}
+.piece.empty .mat{display:grid;place-items:center;align-content:center;aspect-ratio:1;width:100%;box-sizing:border-box;overflow:hidden;background:#e9e0c8;color:#7b6a52;font:400 clamp(11px,calc(var(--pw) * .056),16px)/1.35 var(--body);text-align:center;padding:clamp(8px,calc(var(--pw) * .05),18px)}
 .hall-nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:0 16px;position:relative;z-index:2}
 .hall-arrow{position:absolute;z-index:3;top:calc(var(--lamp) + 12px + var(--pw) / 2 + 14px);translate:0 -50%;width:56px;height:56px;padding:0;border:3px solid #3d2606;cursor:pointer;
   background:linear-gradient(135deg,#ffe08a,#e2a93b 55%,#f7d26a);color:#3a2306;font-size:20px;line-height:1;box-shadow:0 0 0 2px #fff0bd inset,4px 5px 0 rgba(0,0,0,.55)}
