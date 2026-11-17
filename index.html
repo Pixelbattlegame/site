@@ -382,18 +382,20 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
   padding:10px 18px;border-top:2px solid #8a6424;border-bottom:2px solid #8a6424}
 @keyframes hallShine{to{background-position:-200% 0}}
 .hall-sub{margin:0;color:#c9ab7a;font:400 16px/1.3 var(--body)}
+.wallbox{position:relative;display:flex;flex:1 0 auto;--pw:min(64vw,330px,33vh);--lamp:clamp(50px,9vh,92px)}
 .wall{position:relative;display:flex;align-items:flex-start;gap:clamp(18px,6vw,56px);overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
-  -webkit-overflow-scrolling:touch;scrollbar-width:none;padding:104px calc(50% - var(--pw)/2) 26px;--pw:min(64vw,330px,40vh);flex:1 0 auto;outline:none;perspective:900px}
+  -webkit-overflow-scrolling:touch;touch-action:pan-x pan-y;scrollbar-width:none;padding:calc(var(--lamp) + 12px) calc(50% - var(--pw)/2) 12px;flex:1 1 auto;min-width:0;outline:none;perspective:900px}
+@media (pointer:fine){ .wall{cursor:grab} .wall.drag{cursor:grabbing} .wall.drag .frame{cursor:grabbing} }
 .wall::-webkit-scrollbar{display:none}
-.piece{position:relative;flex:0 0 var(--pw);scroll-snap-align:center;margin:0;display:grid;justify-items:center;gap:18px;
+.piece{position:relative;flex:0 0 var(--pw);scroll-snap-align:center;margin:0;display:grid;justify-items:center;gap:12px;
   transform:scale(calc(1 - .2 * var(--d,0))) rotateY(calc(var(--side,0) * 22deg * var(--d,0)));
   filter:brightness(calc(1 - .5 * var(--d,0))) saturate(calc(1 - .35 * var(--d,0)));transition:transform .12s linear,filter .12s linear;
   animation:hallIn .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 70ms)}
 @keyframes hallIn{from{opacity:0;translate:0 24px}to{opacity:1;translate:0 0}}
 /* the spotlight above each artwork, brightest on the one you're looking at */
-.piece::before{content:"";position:absolute;left:50%;top:-88px;width:170%;height:calc(100% + 88px);translate:-50% 0;pointer-events:none;z-index:-1;
+.piece::before{content:"";position:absolute;left:50%;top:calc(4px - var(--lamp));width:170%;height:calc(100% + var(--lamp) - 4px);translate:-50% 0;pointer-events:none;z-index:-1;
   background:conic-gradient(from 150deg at 50% 0%, transparent 0deg, rgba(255,232,180,.16) 22deg, rgba(255,236,190,.22) 30deg, rgba(255,232,180,.16) 38deg, transparent 60deg),radial-gradient(ellipse 18% 46% at 50% 0%, rgba(255,236,190,.26), transparent 75%);-webkit-mask:linear-gradient(#000 55%,transparent);mask:linear-gradient(#000 55%,transparent);opacity:calc(1 - var(--d,0));transition:opacity .2s}
-.piece::after{content:"";position:absolute;top:-92px;left:50%;width:46px;height:10px;translate:-50% 0;border-radius:0 0 8px 8px;
+.piece::after{content:"";position:absolute;top:calc(0px - var(--lamp));left:50%;width:46px;height:10px;translate:-50% 0;border-radius:0 0 8px 8px;
   background:linear-gradient(#1a1014,#4a3640);box-shadow:0 6px 14px rgba(255,230,170,calc(.5 * (1 - var(--d,0))))}
 .piece .frame{position:relative;padding:clamp(12px,3.2vw,18px);border-radius:3px;cursor:pointer;
   background:linear-gradient(135deg,#7a4d12 0%,#f6d97d 18%,#b07a22 34%,#ffe9a8 50%,#a8701b 66%,#f1cb63 82%,#6e440e 100%);
@@ -411,11 +413,18 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 .piece .frame{width:100%;box-sizing:border-box}
 .piece.empty .mat{display:grid;place-items:center;align-content:center;aspect-ratio:1;width:100%;box-sizing:border-box;background:#e9e0c8;color:#7b6a52;font:400 16px/1.4 var(--body);text-align:center;padding:18px}
 .hall-nav{display:flex;align-items:center;justify-content:center;gap:18px;padding:0 16px;position:relative;z-index:2}
-.hall-arrow{width:44px;height:44px;border:2px solid #8a6424;background:rgba(0,0,0,.25);color:#ffe3a3;font-size:16px}
-.hall-arrow:disabled{opacity:.3}
+.hall-arrow{position:absolute;z-index:3;top:calc(var(--lamp) + 12px + var(--pw) / 2 + 14px);translate:0 -50%;width:56px;height:56px;padding:0;border:3px solid #3d2606;cursor:pointer;
+  background:linear-gradient(135deg,#ffe08a,#e2a93b 55%,#f7d26a);color:#3a2306;font-size:20px;line-height:1;box-shadow:0 0 0 2px #fff0bd inset,4px 5px 0 rgba(0,0,0,.55)}
+.hall-arrow:hover{filter:brightness(1.1)}
+.hall-arrow:active{translate:2px calc(-50% + 2px);box-shadow:0 0 0 2px #fff0bd inset,2px 3px 0 rgba(0,0,0,.55)}
+.hall-arrow:focus-visible{outline:3px solid #fff1c2;outline-offset:3px}
+.hall-arrow.prev{left:max(8px,calc(50% - var(--pw) / 2 - 84px))}
+.hall-arrow.next{right:max(8px,calc(50% - var(--pw) / 2 - 84px))}
+.hall-arrow:disabled{opacity:.25;cursor:default;filter:grayscale(.6)}
+@media (max-width:540px){ .hall-arrow{width:48px;height:48px;font-size:17px} }
 .hall-pos{font:400 11px var(--display);color:#e7c98b;min-width:84px;text-align:center}
-.hall-actions{display:flex;justify-content:center;gap:12px;padding:14px 16px 0;position:relative;z-index:2}
-.hall-floor{flex:1 0 70px;min-height:70px;margin-top:18px;background:
+.hall-actions{display:flex;justify-content:center;gap:12px;padding:10px 16px 0;position:relative;z-index:2}
+.hall-floor{flex:1 0 24px;min-height:24px;margin-top:10px;background:
   linear-gradient(rgba(0,0,0,.55),transparent 30%),
   repeating-linear-gradient(90deg,#4b2c1c 0 88px,#3f2416 88px 90px,#56331f 90px 178px,#3f2416 178px 180px);border-top:3px solid #1c0f0a}
 @media (prefers-reduced-motion:reduce){.piece{animation:none;transition:none}.hall-title{animation:none}}
@@ -489,14 +498,14 @@ body{margin:0}
   <div class="hall-head">
     <button class="back" data-back>← BACK</button>
     <h2 class="hall-title">HALL OF ARTWORKS</h2>
-    <p class="hall-sub" id="hallSub">Your saved drawings, kept on this device.</p>
+    <p class="hall-sub" id="hallSub">Your saved drawings, kept on this device. Swipe or use the arrows.</p>
   </div>
-  <div class="wall" id="hallWall" tabindex="0" aria-label="Your saved drawings. Swipe or use the arrow keys to walk through the hall."></div>
-  <div class="hall-nav" id="hallNav">
-    <button class="hall-arrow" id="hallPrev" aria-label="Previous artwork">◀</button>
-    <span class="hall-pos" id="hallPos">1 / 1</span>
-    <button class="hall-arrow" id="hallNext" aria-label="Next artwork">▶</button>
+  <div class="wallbox">
+    <div class="wall" id="hallWall" tabindex="0" aria-label="Your saved drawings. Swipe, drag or use the arrow keys to walk through the hall."></div>
+    <button class="hall-arrow prev" id="hallPrev" aria-label="Previous artwork">◀</button>
+    <button class="hall-arrow next" id="hallNext" aria-label="Next artwork">▶</button>
   </div>
+  <div class="hall-nav" id="hallNav"><span class="hall-pos" id="hallPos">1 / 1</span></div>
   <div class="hall-actions" id="hallActions">
     <button class="btn" id="hallDl">DOWNLOAD</button>
     <button class="btn ghost" id="hallDel">REMOVE</button>
@@ -3030,16 +3039,39 @@ function hallLight(){
   const wall = $('hallWall'), mid = wall.scrollLeft + wall.clientWidth / 2, ps = wall.querySelectorAll('.piece'); let best = 0, bd = 1e9;
   ps.forEach((p, i) => { const c = p.offsetLeft + p.offsetWidth / 2, dist = c - mid, d = Math.min(1, Math.abs(dist) / (p.offsetWidth * 1.15)); p.style.setProperty('--d', d.toFixed(3)); p.style.setProperty('--side', dist < 0 ? 1 : -1); if (Math.abs(dist) < bd){ bd = Math.abs(dist); best = i; } });
   if (best !== hallIdx){ hallIdx = best; hallDelArm = 0; $('hallDel').textContent = 'REMOVE'; }
-  const n = folio().length; $('hallPos').textContent = n ? `${hallIdx + 1} / ${n}` : ''; $('hallPrev').disabled = hallIdx <= 0; $('hallNext').disabled = hallIdx >= n - 1;
+  const n = folio().length, at = hallAnim ? hallTarget : hallIdx; $('hallPos').textContent = n ? `${at + 1} / ${n}` : ''; $('hallPrev').disabled = at <= 0; $('hallNext').disabled = at >= n - 1;
 }
-function hallGo(i){ const ps = $('hallWall').querySelectorAll('.piece'), p = ps[clamp(i, 0, ps.length - 1)]; if (!p) return; const wall = $('hallWall'); wall.scrollTo({left:p.offsetLeft + p.offsetWidth / 2 - wall.clientWidth / 2, behavior:matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'}); }
+let hallAnim = 0, hallTarget = 0;
+function hallGo(i){
+  const wall = $('hallWall'), ps = wall.querySelectorAll('.piece'); if (!ps.length) return;
+  i = clamp(i, 0, ps.length - 1); hallTarget = i; const p = ps[i];
+  const to = clamp(p.offsetLeft + p.offsetWidth / 2 - wall.clientWidth / 2, 0, Math.max(0, wall.scrollWidth - wall.clientWidth)), from = wall.scrollLeft;
+  cancelAnimationFrame(hallAnim); hallAnim = 0;
+  if (Math.abs(to - from) < 1 || matchMedia('(prefers-reduced-motion: reduce)').matches){ wall.style.scrollSnapType = ''; wall.scrollLeft = to; hallLight(); return; }
+  wall.style.scrollSnapType = 'none'; const t0 = performance.now(), dur = 360;
+  const step = now => { const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3); wall.scrollLeft = from + (to - from) * e;
+    if (k < 1) hallAnim = requestAnimationFrame(step); else { hallAnim = 0; wall.style.scrollSnapType = ''; hallLight(); } };
+  hallAnim = requestAnimationFrame(step);
+}
+const hallStep = d => { SFX.click(); hallGo((hallAnim ? hallTarget : hallIdx) + d); };
+// dragging the hall with the mouse (fingers swipe it natively)
+{
+  const wall = $('hallWall'); let drag = null;
+  wall.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' || e.button !== 0) return; cancelAnimationFrame(hallAnim); hallAnim = 0; drag = {x:e.clientX, s:wall.scrollLeft, i:hallIdx, moved:false}; });
+  addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x; if (!drag.moved && Math.abs(dx) > 5){ drag.moved = true; wall.classList.add('drag'); wall.style.scrollSnapType = 'none'; } if (drag.moved) wall.scrollLeft = drag.s - dx; });
+  addEventListener('pointerup', e => { if (!drag) return; const d = drag; drag = null; if (!d.moved) return; wall.classList.remove('drag');
+    const dx = e.clientX - d.x; hallLight(); hallGo(Math.abs(dx) > 50 && hallIdx === d.i ? d.i + (dx < 0 ? 1 : -1) : hallIdx);
+    // a drag isn't a click on the artwork
+    const stop = ev => { ev.stopPropagation(); ev.preventDefault(); }; wall.addEventListener('click', stop, {capture:true, once:true}); setTimeout(() => wall.removeEventListener('click', stop, {capture:true}), 50); });
+}
 { let raf = 0; $('hallWall').addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; hallLight(); }); }, {passive:true}); }
 // a mouse wheel walks sideways through the hall too
 $('hallWall').addEventListener('wheel', e => { if (Math.abs(e.deltaY) > Math.abs(e.deltaX)){ e.preventDefault(); $('hallWall').scrollLeft += e.deltaY; } }, {passive:false});
-$('hallWall').addEventListener('keydown', e => { if (e.key === 'ArrowRight'){ e.preventDefault(); hallGo(hallIdx + 1); } else if (e.key === 'ArrowLeft'){ e.preventDefault(); hallGo(hallIdx - 1); } });
+// arrow keys work anywhere in the hall, not only when the wall has focus
+addEventListener('keydown', e => { if ($('scrHall').hidden || !$('sheet').hidden || /INPUT|TEXTAREA|SELECT/.test((document.activeElement || {}).tagName || '')) return; if (e.key === 'ArrowRight'){ e.preventDefault(); hallStep(1); } else if (e.key === 'ArrowLeft'){ e.preventDefault(); hallStep(-1); } });
 window.addEventListener('resize', () => { if (!$('scrHall').hidden) hallLight(); });
-$('hallPrev').onclick = () => hallGo(hallIdx - 1);
-$('hallNext').onclick = () => hallGo(hallIdx + 1);
+$('hallPrev').onclick = () => hallStep(-1);
+$('hallNext').onclick = () => hallStep(1);
 $('hallDl').onclick = async () => { const x = folio()[hallIdx]; if (!x) return; try { await downloadBlob(await gridToBlob(folioGrid(x), x.p, 512), artFile(x.t)); toast('Downloaded!'); } catch(e){ if (e && e.code === 'declined') return; toast('Downloading is not available here.'); } };
 $('hallDel').onclick = () => {
   const list = folio(), x = list[hallIdx]; if (!x) return;
