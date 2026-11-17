@@ -198,6 +198,12 @@ button.acard[disabled]{opacity:.5;cursor:default}
 .mystrip .acard{flex:0 0 104px}
 #reelCv{width:min(70vw,300px,42vh);height:auto;aspect-ratio:1;border:12px solid transparent;background:linear-gradient(var(--w),var(--w)) padding-box,var(--birch) border-box;box-shadow:0 0 0 2px #8a6a3a}
 @media (max-width:540px){ .agrid{grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:6px} .acard{padding:5px} .acard .cv canvas{border-width:6px} }
+.view.imp .tools{display:none}
+.imppl i,.pdot{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px;box-shadow:0 0 0 1px rgba(0,0,0,.5)}
+.who.imppl.now{outline:2px solid var(--y);outline-offset:1px}
+.who.imppl.past{opacity:.5}
+.impbig{display:grid;justify-items:center}
+.impbig canvas{width:min(70vw,300px,38vh);height:auto;aspect-ratio:1;border:12px solid transparent;background:linear-gradient(var(--w),var(--w)) padding-box,var(--birch) border-box;box-shadow:0 0 0 2px #8a6a3a}
 .reelpal{display:flex;gap:8px;align-items:center;font:400 9px var(--display);color:var(--s)}
 .reelpal i{width:34px;height:34px;border:3px solid var(--k);box-shadow:0 0 0 2px var(--s)}
 .xranks li.me{outline:3px solid var(--y)}
@@ -2316,6 +2322,7 @@ function buildTools(){
 let clearArm = 0;
 function toolAction(id){
   if (!ED.enabled) return;
+  if (ED.ink && id !== 'pen') return;
   auInit();
   if ((id === 'undo' || id === 'redo') && ED.shared){
     const from = id === 'undo' ? ED.undo : ED.redo, to = id === 'undo' ? ED.redo : ED.undo; if (!from.length) return;
@@ -2354,6 +2361,8 @@ function edChanged(){ ED.dirty = true; edRender(); }
 function edRender(){ drawGrid(edCv, ED.grid, ED.pal, {gridLines:ED.gridOn, mirror:ED.mirror, hover:ED.hover}); }
 function cellOf(e){ const r = edCv.getBoundingClientRect(), N = ED.n; return [Math.floor((e.clientX - r.left) / r.width * N), Math.floor((e.clientY - r.top) / r.height * N)]; }
 function paintAt(x, y){
+  // imposter hints: only your colour, one pixel at a time, and only so much ink per turn
+  if (ED.ink){ const n = ED.n, i = y * n + x; if (x < 0 || y < 0 || x >= n || y >= n) return; if (!ED.ink.used.has(i) && ED.ink.used.size >= ED.ink.max) return; ED.ink.used.add(i); ED.grid[i] = ED.color; return; }
   const c = ED.tool === 'erase' ? PALS[ED.pal].paper : ED.color, N = ED.n, sz = N > 32 && ED.size === 2 ? 3 : ED.size;
   for (let j = 0; j < sz; j++) for (let i = 0; i < sz; i++){
     const px = x + i, py = y + j; if (px < 0 || px >= N || py < 0 || py >= N) continue;
@@ -2398,7 +2407,7 @@ addEventListener('keydown', e => {
   if (!$('vVote').hidden && /^[0-9]$/.test(e.key)){ const v = e.key === '0' ? 10 : +e.key; if (voteSlots.length) castVote(voteSlots[0], v); }
 });
 function edStart(palId, n, only){
-  ED.n = n || 32; ED.own = null; ED.shared = false; ED.only = only || null;
+  ED.n = n || 32; ED.own = null; ED.shared = false; ED.only = only || null; ED.ink = null;
   ED.pal = only ? 'pico' : prof.unl.includes(palId) ? palId : 'pico'; ED.grid = new Uint8Array(ED.n * ED.n).fill(PALS[ED.pal].paper);
   ED.color = only ? only[0] : 0; ED.tool = 'pen'; ED.size = 1; ED.mirror = false; ED.undo = []; ED.redo = []; ED.enabled = true; ED.dirty = true;
   buildTools(); buildPalette(); edRender();
@@ -2715,6 +2724,12 @@ $('dQuit').onclick = quitGame; $('vQuit').onclick = quitGame;
 $('dDone').onclick = () => {
   auInit();
   if (xOn()){
+    if (XC.s && XC.s.k === 'imp'){
+      const S = XC.s; if (S.ph !== 'turn' || !ED.ink) return;
+      $('dDone').disabled = true;
+      if (XG) XG.tdone = true; else if (NET.named){ impSendXp(S, true); NET.named.presence({xr:S.mid + ':' + S.r + ':' + S.tk}).catch(() => {}); }
+      return;
+    }
     if (XC.s && ARENA[XC.s.k]){
       const S = XC.s; if (S.ph !== 'draw' || XC.rdy) return;
       XC.rdy = true; $('dDone').textContent = 'WAITING…'; $('dDone').disabled = true;
@@ -2885,8 +2900,8 @@ const XMODES = [
     short:'See it for 5 seconds. Redraw it.', desc:'A picture shows on screen for 5 seconds, then disappears. Redraw it from memory in 45 seconds. Your score is how closely your pixels match the original: the right colors in the right places. 3 rounds, highest total wins.'},
   {k:'pic', grp:'battle', nm:'PICASSO', col:'#c58bff', art:'CASTLE', tag:'8 players · 10 minutes · 64×64',
     short:'A big canvas and 10 minutes.', desc:'8 artists, a big 64×64 canvas and 10 minutes to draw your masterpiece. Then everyone votes, just like a normal battle.'},
-  {k:'imp', grp:'party', nm:'IMPOSTER', col:'#ffd23f', art:'GHOST', isNew:1, tag:'3–8 players · draw, then vote',
-    short:'One player has a different word.', desc:'Everyone gets the same word except one secret imposter, who gets a similar one (like CAT and DOG). Nobody is told who the imposter is, maybe not even the imposter! Draw your word, then vote for the drawing that doesn\'t fit. Catch the imposter for 2 points. The imposter gets a point for every wrong vote and 3 more for getting away. 3 rounds.'},
+  {k:'imp', grp:'party', nm:'IMPOSTER', col:'#ffd23f', art:'GHOST', isNew:1, tag:'3–8 players · one shared drawing',
+    short:'One player has a different word.', desc:'Everyone gets the same word except one secret imposter, who gets a similar one (like CAT and DOG). Nobody is told who the imposter is, maybe not even the imposter! Everyone takes turns adding a tiny hint to ONE shared drawing, each in their own color: 5 seconds and only 10 pixels per turn. Then vote for the player whose lines don\'t fit. Catch the imposter for 2 points. The imposter gets a point for every wrong vote and 3 more for getting away. 3 rounds.'},
   {k:'cha', grp:'party', nm:'CHARADES', col:'#41a6f6', art:'CAT', tag:'up to 8 players · 60 second turns',
     short:'Draw a secret word. Others guess.', desc:'Up to 8 players take turns drawing a secret word while everyone else types guesses. A new letter of the word shows every 10 seconds. First to guess gets 5 points, then 4, 3, 2, and 1 after that. The drawer gets 1 point for every player who guesses it.'},
   {k:'duo', grp:'party', nm:'2V2 TEAM DRAW', col:'#38b7a8', art:'HOUSE', tag:'4 players · 3 minutes · 64×64',
@@ -3756,7 +3771,7 @@ const XINFO = {duo:{name:'2V2', max:4, time:180}, cha:{name:'CHARADES', max:8, t
   blz:{name:'BLITZ', max:8, rounds:5, time:30, fill:4, bots:3},
   tri:{name:'3-COLOR', max:8, rounds:3, time:90, fill:4, bots:3},
   cpy:{name:'COPYCAT', max:8, rounds:3, time:45, show:5, fill:4, bots:3},
-  imp:{name:'IMPOSTER', max:8, rounds:3, time:60, vote:30, fill:5, bots:4, min:3},
+  imp:{name:'IMPOSTER', max:8, rounds:3, turn:5, ink:10, vote:30, fill:5, bots:4, min:3},
   roy:{name:'BATTLE ROYALE', max:12, rounds:0, time:45, fill:8, bots:11, min:3}};
 // modes where everyone draws at the same time each round
 const ARENA = {blz:1, tri:1, cpy:1, imp:1, roy:1};
@@ -4283,6 +4298,148 @@ function arenaGrid(S, key){
 const arenaAlive = S => (S.pl || []).filter(k => !(S.out || []).includes(k));
 const arenaPts = (S, v) => S.k === 'imp' ? `${v | 0} PTS` : ((v | 0) / 10).toFixed(1);
 
+// ---------- imposter: one shared canvas, everyone adds a tiny hint in turn ----------
+// Each player has their own colour. On your turn you get a few seconds and only a few pixels of ink, so the hints stay
+// small. The host keeps the canvas; the player whose turn it is sends their pixels in their presence (`xp`).
+const IMP_COLS = [8, 12, 3, 9, 2, 14, 4, 1, 11, 13, 5, 0];
+const impCol = (S, key) => IMP_COLS[Math.max(0, (S.pl || []).indexOf(key)) % IMP_COLS.length];
+const impPaper = 7;
+// the picture each word "means" to the bots: everyone with the same word has the same picture in mind, so their hints
+// fit together, and the imposter's hints come from a different picture
+const IMP_REF = new Map();
+function impRef(mid, word){
+  const k = mid + ':' + word; if (IMP_REF.has(k)) return IMP_REF.get(k); if (IMP_REF.size > 40) IMP_REF.clear();
+  let h = 7; for (const c of k) h = (Math.imul(h, 31) + c.charCodeAt(0)) >>> 0;
+  const g = makeArt(word, h, 2), bg = bgOf(g), edge = [];
+  // the outline of the thing itself: edges in the middle of the picture, not the ground or the frame
+  for (let i = 0; i < CELLS; i++){ if (g[i] === bg) continue; const x = i % N, y = (i / N) | 0; if (x < 4 || y < 3 || x > N - 5 || y > N - 4) continue; if ([[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => { const xx = x + dx, yy = y + dy; return xx >= 0 && yy >= 0 && xx < N && yy < N && g[yy * N + xx] === bg; })) edge.push(i); }
+  const near = new Uint8Array(CELLS); for (let i = 0; i < CELLS; i++) if (g[i] !== bg){ const x = i % N, y = (i / N) | 0; for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++){ const xx = x + dx, yy = y + dy; if (xx >= 0 && yy >= 0 && xx < N && yy < N) near[yy * N + xx] = 1; } }
+  const r = {edge, edgeSet:new Set(edge), near}; IMP_REF.set(k, r); return r;
+}
+// a bot's hint: a short piece of its picture's outline that nobody has drawn yet
+function impBotHint(G, p){
+  const word = p.key === G.ik ? G.iw : G.th, ref = impRef(G.mid, word), k = 4 + Math.floor(Math.random() * 5);
+  const free = ref.edge.filter(i => G.cv[i] === impPaper); if (!free.length) return [];
+  const start = free[Math.floor(Math.random() * free.length)], out = [start], used = new Set(out);
+  while (out.length < k){
+    const c = out[out.length - 1], x = c % N, y = (c / N) | 0; let nxt = -1;
+    for (const [dx, dy] of [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]]){ const xx = x + dx, yy = y + dy, i = yy * N + xx; if (xx >= 0 && yy >= 0 && xx < N && yy < N && ref.edgeSet.has(i) && !used.has(i) && G.cv[i] === impPaper){ nxt = i; break; } }
+    if (nxt < 0) break; out.push(nxt); used.add(nxt);
+  }
+  // shakier bots are a pixel off now and then
+  const wob = [.3, .15, .05][p.skill | 0];
+  return out.map(i => { if (Math.random() >= wob) return i; const x = clamp(i % N + (Math.random() < .5 ? -1 : 1), 0, N - 1); return ((i / N) | 0) * N + x; });
+}
+function impSetup(G){
+  const I = XINFO.imp, laps = G.pl.length <= 6 ? 2 : 1, n = G.pl.length, rot = G.r % n;
+  G.cv = new Uint8Array(CELLS).fill(impPaper); G.ord = [];
+  for (let l = 0; l < laps; l++) for (let j = 0; j < n; j++) G.ord.push(G.pl[(j + rot) % n].key);
+  G.tk = -1; G.tpx = null; G.bplan = null; G.ink = I.ink;
+}
+function impNextTurn(now, here){
+  const G = XG, I = XINFO.imp;
+  for (;;){
+    G.tk++;
+    if (G.tk >= G.ord.length){ impStartVote(now); return; }
+    const key = G.ord[G.tk], p = G.pl.find(q => q.key === key);
+    if (p && (p.kind === 'bot' || here(key))) break;   // skip players who left
+  }
+  const p = G.pl.find(q => q.key === G.ord[G.tk]);
+  G.ph = 'turn'; G.tstart = now; G.end = now + I.turn * 1000; G.tpx = new Set(); G.tdone = false;
+  G.bplan = p.kind === 'bot' ? impBotHint(G, p) : null;
+  xPublish(true);
+}
+function impApply(G, key, list){
+  const col = IMP_COLS[Math.max(0, G.pl.findIndex(q => q.key === key)) % IMP_COLS.length];
+  for (const i of list){ if (!(i >= 0 && i < CELLS) || G.tpx.has(i)) continue; if (G.tpx.size >= G.ink) break; G.tpx.add(i); G.cv[i] = col; }
+}
+function impStartVote(now){
+  const G = XG; G.ph = 'vote'; G.end = now + XINFO.imp.vote * 1000; G.bvt = {}; G.grids = null;
+  for (const p of G.pl) if (p.kind === 'bot') G.bvt[p.key] = now + 3000 + Math.random() * 12000;
+  xPublish(true);
+}
+function impHostTick(now, here){
+  const G = XG;
+  if (G.ph === 'intro'){ if (now >= G.end) impNextTurn(now, here); return; }
+  const key = G.ord[G.tk], p = G.pl.find(q => q.key === key); if (!p){ impNextTurn(now, here); return; }
+  if (G.ph === 'turn' || G.ph === 'tgap'){
+    // the drawer's pixels: bots a few at a time, me from the editor, others from their presence
+    if (p.kind === 'bot' && G.bplan){ const f = clamp((now - G.tstart) / 3200, 0, 1); impApply(G, key, G.bplan.slice(0, Math.ceil(f * G.bplan.length))); if (f >= 1 && G.ph === 'turn') G.end = Math.min(G.end, now + 500); }
+    else if (key === XC.me && ED.ink){ impApply(G, key, [...ED.ink.used]); }
+    else { const pp = xPeerOf(key), pr = pp && pp.presence; const xp = pr && pr.xp; if (xp && xp.m === G.mid && xp.r === G.r && xp.t === G.tk && Array.isArray(xp.px)) impApply(G, key, xp.px.slice(0, G.ink)); if (pr && pr.xr === G.mid + ':' + G.r + ':' + G.tk) G.end = Math.min(G.end, now); }
+    if (G.tdone) G.end = Math.min(G.end, now);
+    if (p.kind !== 'bot' && !here(key)) G.end = Math.min(G.end, now);
+    xPublish();
+  }
+  if (G.ph === 'turn' && now >= G.end){ G.ph = 'tgap'; G.end = now + 800; xPublish(true); }
+  else if (G.ph === 'tgap' && now >= G.end) impNextTurn(now, here);
+}
+// bots vote for the player whose pixels fit their own word's picture the least
+function impBotVote(p){
+  const G = XG, my = p.key === G.ik ? G.iw : G.th, ref = impRef(G.mid, my); let best = '', bs = 1e9;
+  for (const q of G.pl){
+    if (q.key === p.key) continue;
+    const col = IMP_COLS[G.pl.indexOf(q) % IMP_COLS.length]; let n = 0, inside = 0;
+    for (let i = 0; i < CELLS; i++) if (G.cv[i] === col){ n++; if (ref.near[i]) inside++; }
+    const v = (n ? inside / n : .5) + (Math.random() * 2 - 1) * [.45, .3, .15][p.skill | 0];
+    if (v < bs){ bs = v; best = q.key; }
+  }
+  return best;
+}
+// ---------- every device ----------
+const impCanvas = S => S.cv ? decGrid(S.cv) : new Uint8Array(CELLS).fill(impPaper);
+function impLayer(S, cv, key){ const col = impCol(S, key), g = new Uint8Array(CELLS).fill(impPaper); for (let i = 0; i < CELLS; i++) if (cv[i] === col) g[i] = col; return g; }
+function impRender(S, changed){
+  const key = (S.ord || [])[S.tk], mine = key === XC.me && S.ph === 'turn', cv = impCanvas(S), tk = S.mid + ':' + S.r + ':' + S.tk;
+  if ($('vDraw').hidden || !$('vDraw').classList.contains('imp') || XC.impR !== S.mid + ':' + S.r){
+    XC.impR = S.mid + ':' + S.r; ED.ink = null;
+    showView('vDraw'); $('vDraw').className = 'view arena imp';
+    edStart('pico', 32, [impCol(S, XC.me)]); ED.enabled = false;
+    $('dTheme').parentNode.firstChild.textContent = 'YOUR WORD: '; $('dTheme').textContent = arenaWord(S, XC.me);
+    musicStart(); lastTickSec = -1;
+    if (NET.named) NET.named.presence({xr:0, xp:null, xv:null}).catch(() => {});
+  }
+  if (mine && XC.impTurn !== tk){
+    // my turn starts
+    XC.impTurn = tk; ED.ink = {max:S.ink || XINFO.imp.ink, used:new Set(), t:S.tk}; ED.enabled = true; ED.tool = 'pen'; ED.size = 1; ED.mirror = false; ED.color = impCol(S, XC.me);
+    XC.lastXp = ''; XC.lastXpT = 0; SFX.reveal(2); toast(`Your turn! Add a tiny hint: ${ED.ink.max} pixels.`);
+    $('dDone').hidden = false; $('dDone').disabled = false; $('dDone').textContent = 'DONE';
+  }
+  if (!mine && ED.ink){ impSendXp(S, true); ED.ink = null; ED.enabled = false; ED.down = false; }
+  if (!mine){ $('dDone').hidden = true; }
+  // what's on the canvas: the host's copy, plus my own pixels while I'm still drawing
+  if (ED.ink) for (const i of ED.ink.used) cv[i] = impCol(S, XC.me);
+  if (!ED.down){ ED.grid = cv; edRender(); }
+  const left = ED.ink ? ED.ink.max - ED.ink.used.size : 0;
+  const h = `<span class="who done" style="--pc:${PALS.pico.c[impCol(S, key)]}">${mine ? `YOUR TURN · ${left} PIXELS LEFT` : S.ph === 'turn' ? `${esc(UP(xName(S, key)))} IS DRAWING` : 'NEXT…'}</span>` +
+    (S.ord || []).map((k, i) => `<span class="who imppl${i === S.tk ? ' now' : ''}${i < S.tk ? ' past' : ''}"><i style="background:${PALS.pico.c[impCol(S, k)]}"></i>${esc(xName(S, k))}</span>`).join('');
+  if (h !== XC.statKey){ XC.statKey = h; $('dStatus').innerHTML = h; }
+}
+function impSendXp(S, force){
+  if (!ED.ink || !NET.named) return;
+  const px = [...ED.ink.used], k = px.join(',');
+  if (!force && k === XC.lastXp) return; XC.lastXp = k;
+  NET.named.presence({xp:{m:S.mid, r:S.r, t:ED.ink.t, px}}).catch(() => {});
+}
+function impVote(S){
+  arenaChrome(false);
+  if (XC.voteR !== S.mid + ':' + S.r){ XC.vote = ''; XC.voteR = S.mid + ':' + S.r; }
+  const cv = impCanvas(S);
+  XC.arts = (XC.arts || []).filter(a => a.r !== S.r).concat({r:S.r, th:arenaWord(S, XC.me), g:cv, s:null});
+  $('xrLbl').textContent = 'IMPOSTER · ' + arenaRoundTxt(S); $('xrTitle').textContent = 'WHO IS THE IMPOSTER?';
+  const body = $('xrBody');
+  body.innerHTML = `<p class="sub" style="text-align:center;margin:0">Your word was <b style="color:var(--y)">${esc(arenaWord(S, XC.me))}</b>. Whose lines don't fit? Tap them.</p><div class="impbig"></div><div class="agrid"></div><p class="anext" id="xrVst"></p><p class="anext">Voting ends in <b id="xrNext"></b></p>`;
+  body.querySelector('.impbig').appendChild(smallCanvas(cv, 'pico', 256));
+  const grid = body.querySelector('.agrid');
+  (S.pl || []).forEach(k => {
+    const c = arenaCard(S, k, {button:true, grid:impLayer(S, cv, k), cls:XC.vote === k ? 'pick' : '', sub:`<i class="pdot" style="background:${PALS.pico.c[impCol(S, k)]}"></i>their lines`}); c.dataset.k = k;
+    if (k === XC.me) c.disabled = true;
+    c.onclick = () => { if (k === XC.me || !XC.s || XC.s.ph !== 'vote') return; arenaCastVote(k); grid.querySelectorAll('.acard').forEach(x => x.classList.toggle('pick', x.dataset.k === k)); SFX.click(); };
+    grid.appendChild(c);
+  });
+  SFX.reveal(2); arenaVoteUi(S);
+}
+
 // ---------- host ----------
 function arenaSnap(G, S, bs){
   Object.assign(S, {r:G.r, rn:XINFO[G.kind].rounds, bs, sc:G.sc, out:G.out, rdy:[...G.rdy]});
@@ -4290,6 +4447,7 @@ function arenaSnap(G, S, bs){
     if (G.ph === 'reveal' || G.ph === 'res'){ S.rw = G.th; S.riw = G.iw; S.rik = G.ik; S.vt = G.votes; S.ct = G.caught ? 1 : 0; }
     else { S.w = obf(G.th, G.mid); S.iw = obf(G.iw, G.mid); S.ik = obf(G.ik, G.mid); }
     if (G.ph === 'vote') S.vd = Object.keys(G.votes);
+    if (G.cv){ S.cv = encGrid(G.cv); S.tk = G.tk; S.ord = G.ord; S.ink = G.ink; }
   } else S.th = G.th;
   if (G.kind === 'tri') S.c3 = G.c3;
   if (G.kind === 'cpy') S.cs = G.cs;
@@ -4310,7 +4468,8 @@ function arenaNext(now){
   } else G.th = nextTheme(BOT_THEMES);
   if (G.kind === 'tri') G.c3 = pick3();
   if (G.kind === 'cpy') G.cs = Math.floor(Math.random() * 1e9) + 1;
-  G.ph = 'intro'; G.end = now + (G.kind === 'cpy' ? 2600 : G.kind === 'imp' ? 5500 : 4000);
+  if (G.kind === 'imp') impSetup(G);
+  G.ph = 'intro'; G.end = now + (G.kind === 'cpy' ? 2600 : G.kind === 'imp' ? 6000 : 4000);
   xPublish(true);
 }
 function arenaDraw(now){ const G = XG; G.ph = 'draw'; G.end = now + XINFO[G.kind].time * 1000; G.rdy = new Set(); xPublish(true); }
@@ -4358,11 +4517,6 @@ function arenaFinish(now){
   else G.rank = G.pl.map(p => p.key).sort((a, b) => (G.sc[b] | 0) - (G.sc[a] | 0));
   G.ph = 'res'; G.end = now; xPublish(true);
 }
-function arenaBotVote(p){
-  const G = XG, my = p.key === G.ik ? G.iw : G.th; let best = '', bs = 1e9;
-  for (const q of G.pl){ if (q.key === p.key) continue; const g = G.grids && G.grids[q.key], P = g ? (recognize(g)[my] || 0) : 0, v = P + (Math.random() * 2 - 1) * [.5, .3, .15][p.skill | 0]; if (v < bs){ bs = v; best = q.key; } }
-  return best;
-}
 function arenaReveal(now){
   const G = XG, cnt = {}; for (const v of Object.values(G.votes)) cnt[v] = (cnt[v] | 0) + 1;
   const top = Math.max(0, ...Object.values(cnt)); G.caught = top > 0 && (cnt[G.ik] | 0) === top;
@@ -4376,6 +4530,7 @@ function arenaReveal(now){
 }
 function arenaHostTick(now, here){
   const G = XG, I = XINFO[G.kind], alive = p => !G.out.includes(p.key);
+  if (G.kind === 'imp' && (G.ph === 'intro' || G.ph === 'turn' || G.ph === 'tgap')){ impHostTick(now, here); return; }
   if (G.ph === 'intro' && now >= G.end){ if (G.kind === 'cpy'){ G.ph = 'show'; G.end = now + I.show * 1000; xPublish(true); } else arenaDraw(now); }
   else if (G.ph === 'show' && now >= G.end) arenaDraw(now);
   else if (G.ph === 'draw'){
@@ -4391,7 +4546,7 @@ function arenaHostTick(now, here){
   else if (G.ph === 'vote'){
     for (const p of G.pl){
       if (p.kind === 'remote'){ const pp = xPeerOf(p.key), xv = pp && pp.presence && pp.presence.xv; if (xv && xv.m === G.mid && xv.r === G.r && typeof xv.v === 'string' && xv.v !== p.key && G.pl.some(q => q.key === xv.v) && G.votes[p.key] !== xv.v){ G.votes[p.key] = xv.v; xPublish(true); } }
-      else if (p.kind === 'bot' && !G.votes[p.key] && now >= G.bvt[p.key]){ G.votes[p.key] = arenaBotVote(p); xPublish(true); }
+      else if (p.kind === 'bot' && !G.votes[p.key] && now >= G.bvt[p.key]){ G.votes[p.key] = impBotVote(p); xPublish(true); }
     }
     const voters = G.pl.filter(p => p.kind === 'bot' || here(p.key));
     if (voters.every(p => G.votes[p.key])) G.end = Math.min(G.end, now + 1200);
@@ -4410,7 +4565,8 @@ function arenaRender(S, changed){
   else if (S.ph === 'draw'){ if (changed){ if (out) arenaSpectate(S); else arenaEnterDraw(S); } if (!out) arenaStatus(S); }
   else if (S.ph === 'collect' && changed){ if (!out) arenaFinal(S); showCollecting(); if (out) $('reelSub').textContent = 'Scoring the drawings…'; }
   else if (S.ph === 'score' && changed) arenaRound(S);
-  else if (S.ph === 'vote'){ if (changed) arenaVote(S); else arenaVoteUi(S); }
+  else if (S.ph === 'turn' || S.ph === 'tgap') impRender(S, changed);
+  else if (S.ph === 'vote'){ if (changed) impVote(S); else arenaVoteUi(S); }
   else if (S.ph === 'reveal' && changed) arenaReveal2(S);
   else if (S.ph === 'res' && XC.resShown !== S.mid){ XC.resShown = S.mid; xShowRes(S); }
 }
@@ -4420,7 +4576,7 @@ function arenaIntro(S, out){
   const I = XINFO[S.k], land = () => { const r = $('reel'); r.classList.remove('land'); void r.offsetWidth; r.classList.add('land'); SFX.land(); };
   if (S.k === 'imp'){
     showView('vTheme'); $('reelLbl').textContent = arenaRoundTxt(S) + ' · YOUR WORD IS'; $('reel').textContent = arenaWord(S, XC.me); land();
-    $('reelSub').textContent = 'One artist got a different word. Nobody knows who, maybe not even them.';
+    $('reelSub').textContent = `Take turns adding a tiny hint to one shared drawing (${XINFO.imp.turn} seconds, ${XINFO.imp.ink} pixels). One artist has a different word. Nobody knows who, maybe not even them.`;
     noteTheme(arenaWord(S, XC.me));
   } else if (S.k === 'cpy'){
     showView('vTheme'); $('reelLbl').textContent = arenaRoundTxt(S); $('reel').textContent = 'MEMORIZE!'; land();
@@ -4468,6 +4624,10 @@ function arenaTick(now, S){
     XC.lastXdT = now; const e = encGrid(ED.grid);
     if (e !== XC.lastXd){ XC.lastXd = e; NET.named.presence({xd:{m:S.mid, r:S.r, e}}).catch(() => {}); }
   }
+  if (S.k === 'imp' && S.ph === 'turn' && ED.ink){
+    if (now - (XC.lastXpT || 0) > 300){ XC.lastXpT = now; impSendXp(S); }
+    const w = $('dStatus').querySelector('.who.done'), t = `YOUR TURN · ${ED.ink.max - ED.ink.used.size} PIXELS LEFT`; if (w && w.textContent !== t) w.textContent = t;
+  }
   const left = Math.max(0, Math.ceil((XC.endAt - now) / 1000));
   if (S.ph === 'show' && !$('vTheme').hidden) $('reelSub').textContent = `Memorize it! ${left}`;
   const nx = $('xrNext'); if (nx && !$('vXRes').hidden && nx.textContent !== String(left)) nx.textContent = left;
@@ -4498,21 +4658,6 @@ function arenaRound(S){
   const mine = (XC.arts || []).find(a => a.r === S.r); if (mine && rs[XC.me] != null) mine.s = (rs[XC.me] | 0) / 10;
   if (keys[0] === XC.me || (S.k === 'roy' && !out.has(XC.me))) SFX.unlock(); else SFX.land();
 }
-function arenaVote(S){
-  arenaChrome(false);
-  if (XC.voteR !== S.mid + ':' + S.r){ XC.vote = ''; XC.voteR = S.mid + ':' + S.r; }
-  $('xrLbl').textContent = 'IMPOSTER · ' + arenaRoundTxt(S); $('xrTitle').textContent = 'WHO IS THE IMPOSTER?';
-  const body = $('xrBody');
-  body.innerHTML = `<p class="sub" style="text-align:center;margin:0">Your word was <b style="color:var(--y)">${esc(arenaWord(S, XC.me))}</b>. Tap the drawing that doesn't fit.</p><div class="agrid"></div><p class="anext" id="xrVst"></p><p class="anext">Voting ends in <b id="xrNext"></b></p>`;
-  const grid = body.querySelector('.agrid');
-  (S.pl || []).forEach(k => {
-    const c = arenaCard(S, k, {button:true, cls:XC.vote === k ? 'pick' : ''}); c.dataset.k = k;
-    if (k === XC.me) c.disabled = true;
-    c.onclick = () => { if (k === XC.me || !XC.s || XC.s.ph !== 'vote') return; arenaCastVote(k); grid.querySelectorAll('.acard').forEach(x => x.classList.toggle('pick', x.dataset.k === k)); SFX.click(); };
-    grid.appendChild(c);
-  });
-  SFX.reveal(2); arenaVoteUi(S);
-}
 function arenaCastVote(k){
   const S = XC.s; XC.vote = k;
   if (XG && (appMode === 'xhost' || appMode === 'xlocal')){ XG.votes[XC.me] = k; xPublish(true); }
@@ -4526,9 +4671,10 @@ function arenaReveal2(S){
   $('xrLbl').textContent = 'IMPOSTER · ' + arenaRoundTxt(S); $('xrTitle').textContent = S.ct ? 'IMPOSTER CAUGHT!' : 'THE IMPOSTER GOT AWAY!';
   const body = $('xrBody'), last = S.r + 1 >= XINFO.imp.rounds;
   body.innerHTML = `<div class="xbanner">${me ? (S.ct ? 'YOU WERE THE IMPOSTER AND GOT CAUGHT!' : 'YOU WERE THE IMPOSTER AND GOT AWAY!') : `${esc(UP(xName(S, W.ik)))} WAS THE IMPOSTER!`}</div>
-    <p class="sub" style="text-align:center;margin:0">${me ? 'You' : esc(xName(S, W.ik))} had <b style="color:var(--q)">${esc(W.iw)}</b>. Everyone else had <b style="color:var(--y)">${esc(W.w)}</b>.</p><div class="agrid"></div><p class="anext">${last ? 'Final results' : 'Next round'} in <b id="xrNext"></b></p>`;
+    <p class="sub" style="text-align:center;margin:0">${me ? 'You' : esc(xName(S, W.ik))} had <b style="color:var(--q)">${esc(W.iw)}</b>. Everyone else had <b style="color:var(--y)">${esc(W.w)}</b>.</p><div class="impbig"></div><div class="agrid"></div><p class="anext">${last ? 'Final results' : 'Next round'} in <b id="xrNext"></b></p>`;
+  const cv = impCanvas(S); body.querySelector('.impbig').appendChild(smallCanvas(cv, 'pico', 256));
   const grid = body.querySelector('.agrid'), order = (S.pl || []).slice().sort((a, b) => (b === W.ik) - (a === W.ik) || (rs[b] | 0) - (rs[a] | 0));
-  order.forEach(k => grid.appendChild(arenaCard(S, k, {cls:k === W.ik ? 'imp' : '', tag:k === W.ik ? 'IMPOSTER' : '', sc:`+${rs[k] | 0} PTS`, sub:`${cnt[k] | 0} vote${(cnt[k] | 0) === 1 ? '' : 's'}${vt[k] ? ` · voted for ${vt[k] === XC.me ? 'you' : esc(xName(S, vt[k]))}` : ''}`})));
+  order.forEach(k => grid.appendChild(arenaCard(S, k, {grid:impLayer(S, cv, k), cls:k === W.ik ? 'imp' : '', tag:k === W.ik ? 'IMPOSTER' : '', sc:`+${rs[k] | 0} PTS`, sub:`${cnt[k] | 0} vote${(cnt[k] | 0) === 1 ? '' : 's'}${vt[k] ? ` · voted for ${vt[k] === XC.me ? 'you' : esc(xName(S, vt[k]))}` : ''}`})));
   if (me ? !S.ct : vt[XC.me] === W.ik){ SFX.unlock(); confetti(60); } else SFX.land();
 }
 function arenaResults(S){
@@ -4612,7 +4758,7 @@ function xFromHost(S, peers){
   if (S.mid !== XC.mid){
     if (Array.isArray(S.pl) && !S.pl.includes(XC.me)){ if (NET.mm){ mmBounce(); return; } if (XC.busy !== S.mid){ XC.busy = S.mid; toast('A match is going on in this room. You can join the next one.'); } return; }
     appMode = 'xclient'; if (MM.on) stopQueue(true);
-    NET.named.presence({xo:null, xf:null, xr:0, xg:null, xc:null, xd:null, xv:null}).catch(() => {});
+    NET.named.presence({xo:null, xf:null, xr:0, xg:null, xc:null, xd:null, xv:null, xp:null}).catch(() => {});
   }
   if (appMode !== 'xclient') appMode = 'xclient';
   xRender(S);
@@ -4626,7 +4772,7 @@ $('xrMenu').onclick = () => { if (NET.named) leaveRoom(); toMenu(); };
 $('xrRoom').onclick = () => {
   if (appMode !== 'xhost' || !NET.named) return;
   XG = null; XC.s = null; xDrawReset(); appMode = 'room';
-  NET.named.presence({ph:'room', x:null, xo:null, xf:null, xr:0, xg:null, xc:null, xd:null, xv:null}).catch(() => {});
+  NET.named.presence({ph:'room', x:null, xo:null, xf:null, xr:0, xg:null, xc:null, xd:null, xv:null, xp:null}).catch(() => {});
   updateOpenPresence(); show('scrRoom'); renderRoom();
 };
 $('xrAgain').onclick = () => { auInit(); if (appMode === 'xlocal' || !NET.named) xLocal(XC.kind || lastX); else if (appMode === 'xhost') hostStart(); };
@@ -4686,7 +4832,7 @@ new MutationObserver(ms => { for (const m of ms){ if (m.type === 'characterData'
   if (!numRaf) numRaf = requestAnimationFrame(() => { numRaf = 0; const q = [...numQ]; numQ.clear(); for (const el of q) if (el && el.isConnected && !(el.closest && el.closest('.num'))) numWrap(el); }); })
   .observe(document.body, {childList:true, subtree:true, characterData:true});
 numWrap(document.body);
-window.__pbx = {isRude, folioAdd, setMix(v){ RECOG_MIX = v; }, setTta(v){ QTTA = v; }, qualityOf, quality1, recognizeMlp, recognizeCnn, nextTheme, noteTheme, myRecent, JP, features, effortOf, themeMatch, get XG(){ return XG; }, XC, get appMode(){ return appMode; }, get MM(){ return MM; }, encAny, decAny, copyScore, copyBot, makeArtQ:makeArt, IMP_PAIRS, XINFO, dailyTheme, dayKey, recolor, pick3, ED, encGrid, blankCanvas, judgeA:judge, mulberry, BOT_THEMES:BOT_THEMES};
+window.__pbx = {isRude, folioAdd, setMix(v){ RECOG_MIX = v; }, setTta(v){ QTTA = v; }, qualityOf, quality1, recognizeMlp, recognizeCnn, nextTheme, noteTheme, myRecent, JP, features, effortOf, themeMatch, get XG(){ return XG; }, XC, get appMode(){ return appMode; }, get MM(){ return MM; }, encAny, decAny, copyScore, copyBot, makeArtQ:makeArt, decGrid, IMP_PAIRS, XINFO, dailyTheme, dayKey, recolor, pick3, ED, encGrid, blankCanvas, judgeA:judge, mulberry, BOT_THEMES:BOT_THEMES};
 window.__pb = {myName, get GS(){ return GS; }, get NET(){ return NET; }, prof, rankDelta, tierOf, get RES(){ return RES; }, makeArt, makeArtHi, artFor, judgeDown, detailBonus, judge, judgeRaw, JP, recognize, artFeatures, botVerdict, encGrid, decGrid, get mode(){ return appMode; }, ED, BOT_THEMES};
 window.__pbReady = 1; { const w = document.getElementById('jsWarn'); if (w) w.style.display = 'none'; }
 })();
