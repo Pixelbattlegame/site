@@ -2981,6 +2981,8 @@ const FOLIO_MAX = 120;
 const folio = () => { const f = store.get('folio', []); return Array.isArray(f) ? f : []; };
 function folioSave(list){
   // if the device runs out of room, the oldest artworks make space for the new one
+  // an empty hall has to be saved too (the loop below never runs for 0 artworks, so the last one could never be removed)
+  if (!list.length){ try { localStorage.setItem('pixelbattle.folio', '[]'); } catch(e){} return 0; }
   for (let n = list.length; n > 0; n = Math.min(n - 1, Math.floor(n * .9))){
     try { localStorage.setItem('pixelbattle.folio', JSON.stringify(list.slice(0, n))); return n; } catch(e){}
   }
@@ -3012,6 +3014,7 @@ function renderHall(){
   const track = wall.firstChild;
   $('hallSub').textContent = list.length ? `${list.length} artwork${list.length === 1 ? '' : 's'} on display · kept on this device` : 'Your saved drawings, kept on this device.';
   $('hallNav').hidden = $('hallActions').hidden = !list.length;
+  $('hallPrev').hidden = $('hallNext').hidden = list.length < 2;   // nothing to walk to
   if (!list.length){
     track.innerHTML = `<figure class="piece empty" style="--i:0"><div class="frame"><div class="mat">Your first masterpiece will hang here.<br><br>Tap SAVE TO GALLERY after a match or a practice round.</div></div>
       <figcaption class="placard"><b>COMING SOON</b><i>by you</i><span class="meta">Pixel art, any size</span></figcaption></figure>`;
