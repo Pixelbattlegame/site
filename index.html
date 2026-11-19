@@ -55,7 +55,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible{outline:4px solid var(--y);outline-offset:2px}
 canvas.px{image-rendering:pixelated;display:block}
 
-.screen{position:fixed;inset:0;z-index:10;overflow-y:auto;overscroll-behavior:contain;
+.screen{position:fixed;inset:0 0 var(--adh,0px) 0;z-index:10;overflow-y:auto;overscroll-behavior:contain;
   padding-top:max(18px, env(safe-area-inset-top, 0px));padding-bottom:max(24px, env(safe-area-inset-bottom, 0px));
   padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
 .scrim{background:linear-gradient(90deg, rgba(26,28,44,.96) 0%, rgba(26,28,44,.9) 42%, rgba(26,28,44,.25) 68%, rgba(26,28,44,0) 100%)}
@@ -109,7 +109,7 @@ input[type=text]{width:100%;min-width:0;background:var(--e);border:4px solid var
 .xcard span{color:var(--s);font-size:16px}
 #vDraw:not(.cha) .chabox{display:none}
 #vDraw.cha{grid-template-rows:auto minmax(0,1fr) auto auto}
-#vDraw.cha .board{width:min(100%, calc(100dvh - 330px), 560px)}
+#vDraw.cha .board{width:min(100%, calc(100dvh - var(--adh,0px) - 330px), 560px)}
 #vDraw.watch .tools,#vDraw.watch .palette{visibility:hidden}
 #vDraw.watch .board canvas{cursor:default}
 #vDraw.cha:not(.watch) .chaform{display:none}
@@ -149,8 +149,8 @@ input[type=text]{width:100%;min-width:0;background:var(--e);border:4px solid var
 .mtile small{font:600 15px/1.15 var(--body);color:var(--s)}
 .mtile.wide{grid-column:1/-1}
 .mtile .new{position:absolute;top:-7px;right:-4px;font:400 8px var(--display);background:var(--q);color:var(--k);padding:3px 5px}
-.sheet{position:fixed;inset:0;z-index:60;background:rgba(10,12,22,.8);display:grid;place-items:center;padding:16px}
-.sheetbox{--mc:var(--a);background:var(--k);border:4px solid var(--mc);box-shadow:6px 6px 0 rgba(0,0,0,.6);padding:16px;display:grid;gap:12px;width:100%;max-width:470px;max-height:calc(100dvh - 32px);overflow-y:auto;overscroll-behavior:contain}
+.sheet{position:fixed;inset:0 0 var(--adh,0px) 0;z-index:60;background:rgba(10,12,22,.8);display:grid;place-items:center;padding:16px}
+.sheetbox{--mc:var(--a);background:var(--k);border:4px solid var(--mc);box-shadow:6px 6px 0 rgba(0,0,0,.6);padding:16px;display:grid;gap:12px;width:100%;max-width:470px;max-height:calc(100dvh - var(--adh,0px) - 32px);overflow-y:auto;overscroll-behavior:contain}
 .sheetbox.list{max-width:560px}
 .shead{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:12px;align-items:center}
 .shead .mth{width:56px;height:56px}
@@ -251,7 +251,7 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 .note{font-size:16px;color:var(--s);background:var(--e);padding:10px 12px}
 
 /* ---------- game views ---------- */
-.view{position:fixed;inset:0;z-index:8;display:grid;overflow-y:auto;
+.view{position:fixed;inset:0 0 var(--adh,0px) 0;z-index:8;display:grid;overflow-y:auto;
   padding-top:max(10px, env(safe-area-inset-top, 0px));padding-bottom:max(10px, env(safe-area-inset-bottom, 0px));
   padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
 .topbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:space-between}
@@ -270,7 +270,7 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 
 #vDraw{grid-template-rows:auto minmax(0,1fr) auto;gap:10px}
 .dmain{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;justify-items:center;min-height:0}
-.board{width:min(100%, calc(100dvh - 190px), 640px);aspect-ratio:1;position:relative;border:6px solid var(--w);box-shadow:8px 8px 0 rgba(0,0,0,.5);background:var(--w);touch-action:none}
+.board{width:min(100%, calc(100dvh - var(--adh,0px) - 190px), 640px);aspect-ratio:1;position:relative;border:6px solid var(--w);box-shadow:8px 8px 0 rgba(0,0,0,.5);background:var(--w);touch-action:none}
 .board canvas{width:100%;height:100%;cursor:crosshair;touch-action:none}
 .tools{display:grid;grid-template-columns:repeat(2,52px);gap:6px;align-content:center}
 .tool{width:52px;height:52px;border:0;background:var(--e);display:grid;place-items:center;font:400 7px var(--display);color:var(--s);padding:2px;box-shadow:inset -3px -3px 0 rgba(0,0,0,.3);gap:2px}
@@ -290,10 +290,10 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
   .dstatus::-webkit-scrollbar{display:none}
   .dstatus .who{font-size:13px;padding:2px 6px;white-space:nowrap;flex:none}
   .dmain{grid-template-columns:minmax(0,1fr);gap:10px}
-  .board{width:min(100%, 560px, calc(100dvh - 384px));order:1;min-width:240px}
+  .board{width:min(100%, 560px, calc(100dvh - var(--adh,0px) - 384px));order:1;min-width:240px}
   #vDraw.cha{grid-template-rows:auto max-content auto auto}
-  #vDraw.cha .board{width:min(100%, 560px, calc(100dvh - 400px))}
-  #vDraw.watch .board{width:min(100%, 560px, calc(100dvh - 330px))}
+  #vDraw.cha .board{width:min(100%, 560px, calc(100dvh - var(--adh,0px) - 400px))}
+  #vDraw.watch .board{width:min(100%, 560px, calc(100dvh - var(--adh,0px) - 330px))}
   #vDraw.watch .tools,#vDraw.watch .palette{display:none}
   .feed{height:78px}
   .palette{order:2;grid-template-columns:repeat(8,minmax(0,40px));gap:4px;width:100%;justify-content:center}
@@ -308,7 +308,7 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 .vbar{height:8px;background:var(--e);width:100%}
 .vbar i{display:block;height:100%;background:var(--y);width:100%}
 .stage{display:grid;place-items:center;min-height:0;gap:8px}
-.frame{width:min(100%, calc(100dvh - 300px), 560px);aspect-ratio:1;border:14px solid transparent;background:linear-gradient(var(--w),var(--w)) padding-box,var(--birch) border-box;box-shadow:0 0 0 2px #8a6a3a, inset 0 0 0 1px rgba(255,255,255,.5), 10px 10px 0 2px rgba(0,0,0,.45);min-width:200px}
+.frame{width:min(100%, calc(100dvh - var(--adh,0px) - 300px), 560px);aspect-ratio:1;border:14px solid transparent;background:linear-gradient(var(--w),var(--w)) padding-box,var(--birch) border-box;box-shadow:0 0 0 2px #8a6a3a, inset 0 0 0 1px rgba(255,255,255,.5), 10px 10px 0 2px rgba(0,0,0,.45);min-width:200px}
 .frame canvas{box-shadow:0 0 0 2px #a98a52}
 .frame canvas{width:100%;height:100%}
 .by{font:400 11px var(--display);color:var(--s)}
@@ -365,7 +365,7 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 #qTitle{text-align:center}
 #qSub{text-align:center}
 @media (prefers-reduced-motion: reduce){.loader i,.qbar i{animation:none}}
-#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:max(18px, calc(env(safe-area-inset-bottom, 0px) + 12px));z-index:30;background:var(--w);color:var(--k);padding:10px 14px;font:600 17px var(--body);max-width:calc(100% - 32px);text-align:center;box-shadow:4px 4px 0 rgba(0,0,0,.5)}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--adh,0px) + max(18px, calc(env(safe-area-inset-bottom, 0px) + 12px)));z-index:30;background:var(--w);color:var(--k);padding:10px 14px;font:600 17px var(--body);max-width:calc(100% - 32px);text-align:center;box-shadow:4px 4px 0 rgba(0,0,0,.5)}
 /* ---------- hall of artworks: a little museum ---------- */
 .m-gold{--bg:linear-gradient(135deg,#ffe08a,#e2a93b 55%,#f7d26a);--fg:#3a2306;background:linear-gradient(135deg,#ffe08a,#e2a93b 55%,#f7d26a)!important}
 .hall{background:
@@ -436,11 +436,16 @@ body{margin:0}
 .foot a{color:var(--s);text-decoration:underline;text-underline-offset:3px}
 .adslot{margin:14px auto 0;width:100%;max-width:728px;min-height:104px;text-align:center;overflow:hidden}
 .adslot.above{margin:4px auto 14px}
-@media (min-width:1100px) and (min-height:560px){#adMenu{position:absolute;right:clamp(24px,6vw,120px);top:50%;transform:translateY(-50%);width:316px;box-sizing:border-box;margin:0;z-index:2;background:rgba(26,28,44,.88);padding:8px;box-shadow:4px 4px 0 rgba(0,0,0,.5)}}
+body.adbar-on{--adh:calc(70px + env(safe-area-inset-bottom, 0px))}
+@media (min-width:760px) and (min-height:640px){body.adbar-on{--adh:calc(112px + env(safe-area-inset-bottom, 0px))}}
+.adbar{position:fixed;left:0;right:0;bottom:0;height:var(--adh);z-index:55;box-sizing:border-box;padding:16px 8px env(safe-area-inset-bottom, 0px);background:#0b0c14;border-top:2px solid #262b40;text-align:center;overflow:hidden}
+.adbar::before{content:"AD";position:absolute;left:8px;top:4px;font:400 7px/1 var(--display);letter-spacing:.1em;color:var(--s);opacity:.55}
+.adbar ins{display:inline-block!important;width:320px;height:50px}
+@media (min-width:760px) and (min-height:640px){.adbar ins{width:728px;height:90px}}
 .adslot::before{content:"ADVERTISEMENT";display:block;font:400 8px/1 var(--display);letter-spacing:.1em;color:var(--s);opacity:.6;margin-bottom:6px}
 </style>
 </head>
-<body>
+<body class="adbar-on">
 
 <canvas id="bg" aria-hidden="true"></canvas>
 
@@ -472,7 +477,6 @@ body{margin:0}
       <button class="mode m-teal" id="bModes"><b>OTHER GAMEMODES</b><span>Browse more ways to play.</span></button>
       <button class="mode m-gold" id="bHall"><b>HALL OF ARTWORKS</b><span id="hallCount">Every drawing you save.</span></button>
     </div>
-    <div class="adslot" id="adMenu" hidden></div>
     <div class="tips">
       <div><b>1 THEME</b>A random theme spins up.</div>
       <div><b>2 DRAW</b>Pixel art on a 32×32 canvas.</div>
@@ -638,7 +642,7 @@ body{margin:0}
 <section class="view" id="vJudge" hidden>
   <div class="resbox" style="max-width:560px;justify-self:center;align-content:start">
     <header class="topbar"><div><div class="lbl" id="jLbl">Practice</div><h2 id="jTitle">THEME: PIZZA</h2></div></header>
-    <div class="frame" style="justify-self:center;width:min(100%, 420px, calc(100dvh - 380px));min-width:220px"><canvas id="jc" class="px" width="512" height="512" aria-label="Your drawing"></canvas></div>
+    <div class="frame" style="justify-self:center;width:min(100%, 420px, calc(100dvh - var(--adh,0px) - 380px));min-width:220px"><canvas id="jc" class="px" width="512" height="512" aria-label="Your drawing"></canvas></div>
     <div class="critic" id="jBox"><b id="jHead">TIME'S UP!</b><span id="jScore" style="font:400 28px var(--display);color:var(--y)"></span><span id="jText" style="white-space:pre-line">Ready for the AI judge?</span></div>
     <div class="opt" id="jXp" hidden><div class="lvl">LV <span id="jLvl">1</span><div class="xpbar"><i id="jXpBar"></i></div><span id="jGain" style="color:var(--l)"></span></div><div id="jUnlock"></div></div>
     <div class="row end">
@@ -4891,12 +4895,13 @@ window.__pb = {myName, get GS(){ return GS; }, get NET(){ return NET; }, prof, r
 window.__pbReady = 1; { const w = document.getElementById('jsWarn'); if (w) w.style.display = 'none'; }
 })();
 </script>
+<div class="adbar" id="adBar" role="complementary" aria-label="Advertisement"></div>
 <script>
 // ---------- ads (website only) ----------
 // Paste the AdSense publisher ID (ca-pub-...) and the two ad unit IDs here once AdSense approves the site.
 // While 'client' is empty, no ad code loads. While a slot is empty, that ad space stays hidden.
 // Keep Auto ads OFF for this site in AdSense, so Google never puts ads on the drawing or voting screens.
-// Ads only ever show on the menu, the final results screens and the practice score, never while drawing or voting.
+// Ads show in a fixed bottom banner with its own space (nothing is drawn under it), plus the final results screens and the practice score.
 window.PB_ADS = {client:'ca-pub-7172777388515296', menuSlot:'1624000368', resultsSlot:'9041511291'};
 (function(){
   const A = window.PB_ADS; if (!A.client) return;
@@ -4904,13 +4909,13 @@ window.PB_ADS = {client:'ca-pub-7172777388515296', menuSlot:'1624000368', result
     sc.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(A.client); document.head.appendChild(sc); }
   // 'horizontal' keeps the ads above the results buttons short, so they never push the buttons off the screen
   const fill = (id, slot, fmt) => { const box = document.getElementById(id); if (!box || !slot || box.dataset.filled) return; box.hidden = false; box.dataset.filled = '1';
-    const ins = document.createElement('ins'); ins.className = 'adsbygoogle'; ins.style.display = 'block'; ins.dataset.adClient = A.client; ins.dataset.adSlot = slot; ins.dataset.adFormat = fmt || 'auto'; ins.dataset.fullWidthResponsive = fmt ? 'false' : 'true'; box.appendChild(ins);
+    const ins = document.createElement('ins'); ins.className = 'adsbygoogle'; ins.style.display = 'block'; ins.dataset.adClient = A.client; ins.dataset.adSlot = slot; if (fmt === 'fixed') ins.style.display = 'inline-block'; else { ins.dataset.adFormat = fmt || 'auto'; ins.dataset.fullWidthResponsive = fmt ? 'false' : 'true'; } box.appendChild(ins);
     try { (window.adsbygoogle = window.adsbygoogle || []).push({}); } catch(e){} };
   // an ad unit has to be on screen (with a width) when it's filled, so each fills the first time its screen shows
   const when = (sel, fn) => { const el = document.getElementById(sel); if (!el) return; const go = () => { if (!el.hidden && el.offsetWidth > 0){ fn(); ob.disconnect(); } }; const ob = new MutationObserver(go); ob.observe(el, {attributes:true, attributeFilter:['hidden']}); let p = el.parentElement; while (p){ ob.observe(p, {attributes:true, attributeFilter:['hidden']}); p = p.parentElement; } setTimeout(go, 500); };
   // some ad spaces only show at the right moment: with the final results buttons, or once the practice drawing is scored
   const mirror = (src, id) => { const a = document.getElementById(src), b = document.getElementById(id); if (!a || !b) return; const go = () => { b.style.display = a.hidden ? 'none' : ''; }; new MutationObserver(go).observe(a, {attributes:true, attributeFilter:['hidden']}); go(); };
-  when('scrMenu', () => fill('adMenu', A.menuSlot));
+  fill('adBar', A.menuSlot, 'fixed');
   when('vRes', () => fill('adRes', A.resultsSlot, 'horizontal'));
   mirror('xrBtns', 'adX'); when('xrBtns', () => fill('adX', A.resultsSlot, 'horizontal'));
   mirror('jXp', 'adJ'); when('jXp', () => fill('adJ', A.resultsSlot));
