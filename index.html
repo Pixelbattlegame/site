@@ -4313,6 +4313,49 @@ function copyBot(t, seed, skill){
   }
   return o;
 }
+// Blitz bots only have 30 seconds, so they draw a quick sketch of their idea: chunkier pixels, just a few colours,
+// small details left out, and often no background at all.
+function blitzSketch(t, seed, skill){
+  const R = mulberry(seed ^ 0x5bd1e995), sk = clamp(skill | 0, 0, 2), o = new Uint8Array(CELLS);
+  let bg = bgOf(t); const keepBg = bg === 7 || R() < [.25, .4, .55][sk];
+  // 1. chunky blocks: each block takes the colour that covers most of it
+  const b = [3, 2, 2][sk], M = Math.ceil(N / b), C = new Uint8Array(M * M);
+  for (let cy = 0; cy < M; cy++) for (let cx = 0; cx < M; cx++){
+    const cnt = new Map(); let best = bg, bn = 0;
+    for (let y = cy * b; y < Math.min(N, cy * b + b); y++) for (let x = cx * b; x < Math.min(N, cx * b + b); x++){ const v = t[y * N + x], n = (cnt.get(v) || 0) + (v === bg ? 1 : 1.6); cnt.set(v, n); if (n > bn){ bn = n; best = v; } }
+    C[cy * M + cx] = best;
+  }
+  // 2. only the main few colours: anything else becomes the closest kept colour
+  const area = new Map(); for (const v of C) if (v !== bg) area.set(v, (area.get(v) || 0) + 1);
+  const kept = [...area.keys()].sort((x, y) => area.get(y) - area.get(x)).slice(0, [3, 4, 5][sk]);
+  for (let k = 0; k < C.length; k++){ const v = C[k]; if (v === bg || kept.includes(v)) continue; let best = bg, bd = 1e9; for (const c of kept){ const d = colDist(c, v); if (d < bd){ bd = d; best = c; } } C[k] = best; }
+  // 3. small bits get skipped
+  const seen = new Uint8Array(M * M), drop = [.7, .5, .35][sk];
+  for (let k = 0; k < M * M; k++){
+    if (seen[k] || C[k] === bg) continue;
+    const col = C[k], part = [k]; seen[k] = 1;
+    for (let q = 0; q < part.length; q++){ const c = part[q], x = c % M, y = (c / M) | 0;
+      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]){ if (nx < 0 || ny < 0 || nx >= M || ny >= M) continue; const n = ny * M + nx; if (!seen[n] && C[n] === col){ seen[n] = 1; part.push(n); } } }
+    if (part.length <= 2 && R() < drop) for (const c of part) C[c] = bg;
+  }
+  // 4. no fiddly single pixels: a lone block that its neighbours all disagree with takes their colour
+  for (let pass = 0; pass < 2; pass++) for (let cy = 0; cy < M; cy++) for (let cx = 0; cx < M; cx++){
+    const k = cy * M + cx, cnt = new Map(); let same = 0;
+    for (const [nx, ny] of [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]]){ if (nx < 0 || ny < 0 || nx >= M || ny >= M) continue; const v = C[ny * M + nx]; if (v === C[k]) same++; cnt.set(v, (cnt.get(v) || 0) + 1); }
+    if (!same){ let best = C[k], bn = 0; for (const [v, n] of cnt) if (n > bn){ bn = n; best = v; } if (bn >= 2) C[k] = best; }
+  }
+  // 5. no time for a background: leave the paper white
+  if (!keepBg){ for (let k = 0; k < C.length; k++) if (C[k] === bg) C[k] = 7; bg = 7; }
+  // 6. slightly wobbly, hand-drawn edges instead of a perfect grid
+  const G = 5, A = [.9, .6, .4][sk], wx = [], wy = []; for (let k = 0; k < G * G; k++){ wx.push((R() * 2 - 1) * A); wy.push((R() * 2 - 1) * A); }
+  const bend = (arr, x, y) => { const gx = x / (N - 1) * (G - 1), gy = y / (N - 1) * (G - 1), x0 = Math.min(G - 2, Math.floor(gx)), y0 = Math.min(G - 2, Math.floor(gy)), fx = gx - x0, fy = gy - y0;
+    return arr[y0 * G + x0] * (1 - fx) * (1 - fy) + arr[y0 * G + x0 + 1] * fx * (1 - fy) + arr[(y0 + 1) * G + x0] * (1 - fx) * fy + arr[(y0 + 1) * G + x0 + 1] * fx * fy; };
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++){
+    const cx = Math.floor((x + bend(wx, x, y)) / b), cy = Math.floor((y + bend(wy, x, y)) / b);
+    o[y * N + x] = cx >= 0 && cy >= 0 && cx < M && cy < M ? C[cy * M + cx] : bg;
+  }
+  return o;
+}
 // Copycat score: how many pixels match the original. Right colour in the right place counts fully, one pixel off counts
 // 60%, a close colour a little. Empty background doesn't count, so you can't score by leaving the canvas blank.
 function copyScore(t, g){
@@ -4340,7 +4383,7 @@ function arenaBotArt(S, key){
   let g;
   if (S.k === 'cpy') g = copyBot(arenaTarget(S), seed, sk);
   else if (S.k === 'imp') g = makeArt(arenaWord(S, key), seed, sk);
-  else { g = makeArt(S.th, seed, sk); if (S.k === 'tri') g = recolor(g, (S.c3 || [0, 8, 12]).concat(7)); }
+  else { g = makeArt(S.th, seed, sk); if (S.k === 'tri') g = recolor(g, (S.c3 || [0, 8, 12]).concat(7)); if (S.k === 'blz') g = blitzSketch(g, seed, sk); }
   ARENA_ART.set(k, g); return g;
 }
 // anyone's drawing for this round (null if they left before sending it)
@@ -4890,7 +4933,7 @@ new MutationObserver(ms => { for (const m of ms){ if (m.type === 'characterData'
   if (!numRaf) numRaf = requestAnimationFrame(() => { numRaf = 0; const q = [...numQ]; numQ.clear(); for (const el of q) if (el && el.isConnected && !(el.closest && el.closest('.num'))) numWrap(el); }); })
   .observe(document.body, {childList:true, subtree:true, characterData:true});
 numWrap(document.body);
-window.__pbx = {isRude, folioAdd, setMix(v){ RECOG_MIX = v; }, setTta(v){ QTTA = v; }, qualityOf, quality1, recognizeMlp, recognizeCnn, nextTheme, noteTheme, myRecent, JP, features, effortOf, themeMatch, get XG(){ return XG; }, XC, get appMode(){ return appMode; }, get MM(){ return MM; }, encAny, decAny, copyScore, copyBot, makeArtQ:makeArt, decGrid, IMP_PAIRS, XINFO, dailyTheme, dayKey, recolor, pick3, ED, encGrid, blankCanvas, judgeA:judge, mulberry, BOT_THEMES:BOT_THEMES};
+window.__pbx = {isRude, blitzSketch, makeArt, folioAdd, setMix(v){ RECOG_MIX = v; }, setTta(v){ QTTA = v; }, qualityOf, quality1, recognizeMlp, recognizeCnn, nextTheme, noteTheme, myRecent, JP, features, effortOf, themeMatch, get XG(){ return XG; }, XC, get appMode(){ return appMode; }, get MM(){ return MM; }, encAny, decAny, copyScore, copyBot, blitzSketch, makeArtQ:makeArt, decGrid, IMP_PAIRS, XINFO, dailyTheme, dayKey, recolor, pick3, ED, encGrid, blankCanvas, judgeA:judge, mulberry, BOT_THEMES:BOT_THEMES};
 window.__pb = {myName, get GS(){ return GS; }, get NET(){ return NET; }, prof, rankDelta, tierOf, get RES(){ return RES; }, makeArt, makeArtHi, artFor, judgeDown, detailBonus, judge, judgeRaw, JP, recognize, artFeatures, botVerdict, encGrid, decGrid, get mode(){ return appMode; }, ED, BOT_THEMES};
 window.__pbReady = 1; { const w = document.getElementById('jsWarn'); if (w) w.style.display = 'none'; }
 })();
