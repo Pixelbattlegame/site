@@ -108,8 +108,7 @@ input[type=text]{width:100%;min-width:0;background:var(--e);border:4px solid var
 .xcard b{font:400 13px var(--display);color:var(--a)}
 .xcard span{color:var(--s);font-size:16px}
 #vDraw:not(.cha) .chabox{display:none}
-#vDraw.cha{grid-template-rows:auto minmax(0,1fr) auto auto}
-#vDraw.cha .board{width:min(100%, calc(100dvh - var(--adh,0px) - 330px), 560px)}
+#vDraw.cha{grid-template-rows:auto minmax(min-content,1fr) auto auto}
 #vDraw.watch .tools,#vDraw.watch .palette{visibility:hidden}
 #vDraw.watch .board canvas{cursor:default}
 #vDraw.cha:not(.watch) .chaform{display:none}
@@ -268,32 +267,32 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 .reel.land{animation:land .45s steps(4)}
 @keyframes land{0%{transform:scale(1.25)}100%{transform:scale(1)}}
 
-#vDraw{grid-template-rows:auto minmax(0,1fr) auto;gap:10px}
-.dmain{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;justify-items:center;min-height:0}
-.board{width:min(100%, calc(100dvh - var(--adh,0px) - 190px), 640px);aspect-ratio:1;position:relative;border:6px solid var(--w);box-shadow:8px 8px 0 rgba(0,0,0,.5);background:var(--w);touch-action:none}
+#vDraw{grid-template-rows:auto minmax(min-content,1fr) auto;gap:10px}
+.dmain{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;justify-items:center;min-height:0;--uh:calc(100dvh - var(--adh,0px));--t:clamp(30px, calc((var(--uh) - 150px) / 5.6), 52px);--s:clamp(19px, calc((var(--uh) - 150px) / 9), 36px)}
+.bwrap{container-type:size;align-self:stretch;justify-self:stretch;min-height:150px;min-width:150px;display:grid;place-items:center}
+.board{width:min(100cqw, 100cqh, 820px);aspect-ratio:1;position:relative;border:6px solid var(--w);box-shadow:8px 8px 0 rgba(0,0,0,.5);background:var(--w);touch-action:none}
 .board canvas{width:100%;height:100%;cursor:crosshair;touch-action:none}
-.tools{display:grid;grid-template-columns:repeat(2,52px);gap:6px;align-content:center}
-.tool{width:52px;height:52px;border:0;background:var(--e);display:grid;place-items:center;font:400 7px var(--display);color:var(--s);padding:2px;box-shadow:inset -3px -3px 0 rgba(0,0,0,.3);gap:2px}
-.tool svg{width:22px;height:22px;display:block}
+.tools{display:grid;grid-template-columns:repeat(2,var(--t));gap:6px;align-content:center}
+.tool{width:var(--t);height:var(--t);border:0;background:var(--e);display:grid;place-items:center;font:400 7px var(--display);color:var(--s);padding:2px;box-shadow:inset -3px -3px 0 rgba(0,0,0,.3);gap:2px}
+.tool svg{width:min(22px, calc(var(--t) * .42));height:min(22px, calc(var(--t) * .42));display:block}
 .tool[aria-pressed="true"]{background:var(--y);color:var(--k)}
-.palette{display:grid;grid-template-columns:repeat(4,36px);gap:5px;align-content:center}
-.swatch{width:36px;height:36px;border:3px solid var(--k);padding:0;box-shadow:inset -3px -3px 0 rgba(0,0,0,.25)}
+.palette{display:grid;grid-template-columns:repeat(4,var(--s));gap:5px;align-content:center}
+.swatch{width:var(--s);height:var(--s);border:3px solid var(--k);padding:0;box-shadow:inset -3px -3px 0 rgba(0,0,0,.25)}
 .swatch[aria-pressed="true"]{border-color:var(--w);outline:3px solid var(--k);transform:scale(1.08)}
 .palsel{display:none}
 .dstatus{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;align-items:center}
 .who{background:rgba(26,28,44,.85);border-left:5px solid var(--c);padding:3px 8px;font:600 14px var(--body)}
 .who.done{border-left-color:var(--l);color:var(--l)}
-@media (max-width:860px), (max-aspect-ratio: 1/1){
-  #vDraw{grid-template-rows:auto max-content auto;align-content:start;overflow-y:auto}
-  #vDraw .dmain{min-height:auto}
+@media (max-aspect-ratio: 6/5){
+  #vDraw{grid-template-rows:auto minmax(min-content,1fr) auto;overflow-y:auto}
+  #vDraw .dmain{grid-template-rows:minmax(0,1fr) auto auto}
+  .bwrap{order:1;min-height:190px}
   .dstatus{order:4;min-height:26px;flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;gap:4px;padding-bottom:2px}
   .dstatus::-webkit-scrollbar{display:none}
   .dstatus .who{font-size:13px;padding:2px 6px;white-space:nowrap;flex:none}
   .dmain{grid-template-columns:minmax(0,1fr);gap:10px}
-  .board{width:min(100%, 560px, calc(100dvh - var(--adh,0px) - 384px));order:1;min-width:240px}
-  #vDraw.cha{grid-template-rows:auto max-content auto auto}
-  #vDraw.cha .board{width:min(100%, 560px, calc(100dvh - var(--adh,0px) - 400px))}
-  #vDraw.watch .board{width:min(100%, 560px, calc(100dvh - var(--adh,0px) - 330px))}
+  #vDraw.cha{grid-template-rows:auto minmax(min-content,1fr) auto auto}
+  #vDraw.cha .dmain{grid-template-rows:minmax(0,1fr) auto auto}
   #vDraw.watch .tools,#vDraw.watch .palette{display:none}
   .feed{height:78px}
   .palette{order:2;grid-template-columns:repeat(8,minmax(0,40px));gap:4px;width:100%;justify-content:center}
@@ -303,8 +302,15 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
   .tool{width:100%;height:auto;aspect-ratio:1}
   .tool svg{width:18px;height:18px}
 }
+/* short landscape screens: the who's-done list stays one line and scrolls sideways */
+@media (min-aspect-ratio: 6/5) and (max-height:560px){ .dstatus{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;scrollbar-width:none;gap:4px} .dstatus::-webkit-scrollbar{display:none} .dstatus .who{font-size:13px;padding:2px 6px;white-space:nowrap;flex:none} }
+/* wider portrait screens (iPhone Duo, iPads): colours in 2 rows of 16, so the board gets the height */
+@media (max-aspect-ratio: 6/5) and (min-width:440px){ .palette{grid-template-columns:repeat(16,minmax(0,40px));gap:4px} }
 
-#vVote{grid-template-rows:auto minmax(0,1fr) auto;gap:10px}
+#vVote{grid-template-rows:auto minmax(min-content,1fr) auto;gap:10px}
+/* the picture being voted on fills whatever space the buttons leave, on any screen shape */
+#vVote .stage{container-type:size;min-height:150px;grid-template-rows:minmax(0,1fr) auto;align-content:center}
+#vVote .frame{width:min(100cqw, calc(100cqh - 30px), 720px);min-width:120px}
 .vbar{height:8px;background:var(--e);width:100%}
 .vbar i{display:block;height:100%;background:var(--y);width:100%}
 .stage{display:grid;place-items:center;min-height:0;gap:8px}
@@ -616,7 +622,7 @@ body.adbar-on{--adh:calc(70px + env(safe-area-inset-bottom, 0px))}
   </header>
   <div class="dmain">
     <div class="tools" id="tools" role="toolbar" aria-label="Drawing tools"></div>
-    <div class="board" id="board"><canvas id="ed" class="px" width="512" height="512" aria-label="Drawing canvas"></canvas></div>
+    <div class="bwrap"><div class="board" id="board"><canvas id="ed" class="px" width="512" height="512" aria-label="Drawing canvas"></canvas></div></div>
     <div class="palette" id="palette" role="group" aria-label="Colors"></div>
   </div>
   <div class="chabox" id="chaBox">
