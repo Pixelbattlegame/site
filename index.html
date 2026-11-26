@@ -440,15 +440,12 @@ h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0;line-heigh
 html{-webkit-text-size-adjust:100%}
 body{margin:0}
 .foot a{color:var(--s);text-decoration:underline;text-underline-offset:3px}
-.adslot{margin:14px auto 0;width:100%;max-width:728px;min-height:104px;text-align:center;overflow:hidden}
-.adslot.above{margin:4px auto 14px}
 body.adbar-on{--adh:calc(70px + env(safe-area-inset-bottom, 0px))}
 @media (min-width:760px) and (min-height:640px){body.adbar-on{--adh:calc(112px + env(safe-area-inset-bottom, 0px))}}
 .adbar{position:fixed;left:0;right:0;bottom:0;height:var(--adh);z-index:55;box-sizing:border-box;padding:16px 8px env(safe-area-inset-bottom, 0px);background:#0b0c14;border-top:2px solid #262b40;text-align:center;overflow:hidden}
 .adbar::before{content:"AD";position:absolute;left:8px;top:4px;font:400 7px/1 var(--display);letter-spacing:.1em;color:var(--s);opacity:.55}
 .adbar ins{display:inline-block!important;width:320px;height:50px}
 @media (min-width:760px) and (min-height:640px){.adbar ins{width:728px;height:90px}}
-.adslot::before{content:"ADVERTISEMENT";display:block;font:400 8px/1 var(--display);letter-spacing:.1em;color:var(--s);opacity:.6;margin-bottom:6px}
 </style>
 </head>
 <body class="adbar-on">
@@ -658,7 +655,6 @@ body.adbar-on{--adh:calc(70px + env(safe-area-inset-bottom, 0px))}
       <button class="btn pink" id="jShare" hidden>SHARE</button>
       <button class="btn" id="jRate">RATE MY ART</button>
     </div>
-    <div class="adslot" id="adJ" hidden></div>
   </div>
 </section>
 
@@ -676,7 +672,6 @@ body.adbar-on{--adh:calc(70px + env(safe-area-inset-bottom, 0px))}
       <div class="note" id="rRkNote" style="margin-top:6px"></div>
     </div>
     <div id="criticBox"></div>
-    <div class="adslot above" id="adRes" hidden></div>
     <div class="row end" id="rBtns" hidden>
       <button class="btn ghost" id="rCritic" hidden>AI CRITIC</button>
       <button class="btn ghost" id="rSave" hidden>SAVE TO GALLERY</button>
@@ -692,7 +687,6 @@ body.adbar-on{--adh:calc(70px + env(safe-area-inset-bottom, 0px))}
     <header class="topbar"><div><div class="lbl" id="xrLbl">Results</div><h2 id="xrTitle">RESULTS</h2></div></header>
     <div id="xrBody"></div>
     <div class="opt" id="xrXp"><div class="lvl">LV <span id="xrLvl">1</span><div class="xpbar"><i id="xrXpBar"></i></div><span id="xrGain" style="color:var(--l)"></span></div></div>
-    <div class="adslot above" id="adX" hidden></div>
     <div class="row end" id="xrBtns"><button class="btn ghost" id="xrMenu">MENU</button><button class="btn ghost" id="xrSave" hidden>SAVE TO GALLERY</button><button class="btn ghost" id="xrRoom" hidden>BACK TO ROOM</button><button class="btn pink" id="xrFind" hidden>NEW MATCH</button><button class="btn" id="xrAgain" hidden>PLAY AGAIN</button></div>
     <div class="note" id="xrWait" hidden>The host picks what happens next.</div>
   </div>
@@ -4950,7 +4944,7 @@ window.__pbReady = 1; { const w = document.getElementById('jsWarn'); if (w) w.st
 // Paste the AdSense publisher ID (ca-pub-...) and the two ad unit IDs here once AdSense approves the site.
 // While 'client' is empty, no ad code loads. While a slot is empty, that ad space stays hidden.
 // Keep Auto ads OFF for this site in AdSense, so Google never puts ads on the drawing or voting screens.
-// Ads show in a fixed bottom banner with its own space (nothing is drawn under it), plus the final results screens and the practice score.
+// The only ad is the fixed bottom banner, which has its own space so nothing is drawn under it.
 window.PB_ADS = {client:'ca-pub-7172777388515296', menuSlot:'1624000368', resultsSlot:'9041511291'};
 (function(){
   const A = window.PB_ADS; if (!A.client) return;
@@ -4965,9 +4959,6 @@ window.PB_ADS = {client:'ca-pub-7172777388515296', menuSlot:'1624000368', result
   // some ad spaces only show at the right moment: with the final results buttons, or once the practice drawing is scored
   const mirror = (src, id) => { const a = document.getElementById(src), b = document.getElementById(id); if (!a || !b) return; const go = () => { b.style.display = a.hidden ? 'none' : ''; }; new MutationObserver(go).observe(a, {attributes:true, attributeFilter:['hidden']}); go(); };
   fill('adBar', A.menuSlot, 'fixed');
-  when('vRes', () => fill('adRes', A.resultsSlot, 'horizontal'));
-  mirror('xrBtns', 'adX'); when('xrBtns', () => fill('adX', A.resultsSlot, 'horizontal'));
-  mirror('jXp', 'adJ'); when('jXp', () => fill('adJ', A.resultsSlot));
 })();
 </script>
 </body>
